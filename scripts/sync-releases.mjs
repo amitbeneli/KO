@@ -132,8 +132,14 @@ async function resolveInbox(urls, known) {
       if (/soundcloud\.com/.test(src)) {
         platform = 'soundcloud';
         if (/on\.soundcloud\.com/.test(src)) url = (await fetch(src, { redirect: 'follow', headers: { 'User-Agent': 'Mozilla/5.0' } })).url.split('?')[0];
-        const o = await getJson(`https://soundcloud.com/oembed?format=json&url=${encodeURIComponent(url)}`);
-        title = o.title.replace(/\s+by\s+[^]+$/, ''); cover = o.thumbnail_url;
+        try {
+          const o = await getJson(`https://soundcloud.com/oembed?format=json&url=${encodeURIComponent(url)}`);
+          title = o.title.replace(/\s+by\s+[^]+$/, ''); cover = o.thumbnail_url;
+        } catch (e) { // private or embedding off: name it from the address
+          if (url === src) throw e;
+          title = decodeURIComponent(url.split('/').pop()).replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+          console.warn(`inbox ${src}: no oEmbed (${e.message}), named from URL: ${title}`);
+        }
       } else if (/open\.spotify\.com/.test(src)) {
         platform = 'spotify'; url = src.split('?')[0];
         const o = await getJson(`https://open.spotify.com/oembed?url=${encodeURIComponent(url)}`);

@@ -119,7 +119,7 @@
     track.addEventListener('scroll', ends, { passive: true }); ends();
   }
 
-  $('#releaseGrid').innerHTML = D.releases.filter(r => r.latest || !r.featured).slice(0, 8).map((r, i) => `
+  $('#releaseGrid').innerHTML = D.releases.filter(r => r.latest || !r.featured).slice(0, 12).map((r, i) => `
     <article class="rel reveal" style="transition-delay:${i * 70}ms">
       <a class="cover" href="${mainLink(r)}" ${ext} aria-label="Listen to ${esc(r.title)}">${cover(r)}<span class="play">${PLAY}</span></a>
       <h3>${esc(r.title)}</h3>
