@@ -14,7 +14,7 @@
   <link rel="icon" href="assets/media/logo-ko.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -30,13 +30,11 @@
 
     <div class="hero-inner">
       <img class="logo" src="assets/media/logo-ko.png" alt="K.O" width="1054" height="538" fetchpriority="high">
-      <p class="tagline" id="tagline"></p>
 
-      <div class="cube-stage" id="cubeStage" aria-label="Live moments — drag to spin, tap to open">
+      <div class="cube-stage" id="cubeStage" aria-label="Live clips. Drag to spin, tap a face to watch">
         <div class="cube" id="cube"></div>
         <div class="cube-floor" aria-hidden="true"></div>
       </div>
-      <p class="cube-hint">Drag to spin · Tap to watch</p>
 
       <nav class="platforms" id="heroPlatforms" aria-label="Listen on"></nav>
     </div>
@@ -44,61 +42,40 @@
     <a class="scroll-cue" href="#out-now" aria-label="Scroll to music"><span></span></a>
   </header>
 
-  <!-- PLATFORM BAND -->
-  <div class="band" aria-hidden="true"><div class="band-track" id="band"></div></div>
-
   <!-- STICKY NAV -->
   <nav class="chips" id="chips" aria-label="Sections">
     <a href="#out-now">Out Now</a>
     <a href="#releases">Latest Releases</a>
-    <a href="#live">K.O Live 2025</a>
+    <a href="#live">Live 2025</a>
     <a href="#mixes">Videos & Mixes</a>
     <a href="#booking">Booking</a>
   </nav>
 
   <main>
     <section id="out-now" class="section">
-      <div class="section-head reveal">
-        <span class="kicker">01 — Out now</span>
-        <h2>New <em>music</em></h2>
-      </div>
+      <h2 class="section-head reveal">Out Now</h2>
       <div class="featured" id="featured"></div>
     </section>
 
     <section id="releases" class="section">
-      <div class="section-head reveal">
-        <span class="kicker">02 — Discography</span>
-        <h2>Latest <em>releases</em></h2>
-      </div>
+      <h2 class="section-head reveal">Latest Releases</h2>
       <div class="grid" id="releaseGrid"></div>
     </section>
 
     <section id="live" class="section">
-      <div class="section-head reveal">
-        <span class="kicker">03 — On stage</span>
-        <h2>K.O <em>Live</em> 2025</h2>
-      </div>
+      <h2 class="section-head reveal">Live 2025</h2>
       <div class="live" id="liveGrid"></div>
-      <div class="gallery reveal" id="gallery"></div>
     </section>
 
     <section id="mixes" class="section">
-      <div class="section-head reveal">
-        <span class="kicker">04 — Listen in</span>
-        <h2>Videos <em>&amp;</em> mixes</h2>
-      </div>
+      <h2 class="section-head reveal">Videos &amp; Mixes</h2>
       <div class="mixes" id="mixList"></div>
     </section>
 
     <section id="booking" class="section">
       <div class="booking reveal">
-        <img src="assets/media/covers/booking-cow.webp" alt="" class="booking-art" loading="lazy">
-        <div class="booking-body">
-          <span class="kicker">05 — Management & booking</span>
-          <h2>Bring K.O <em>to your night</em></h2>
-          <a class="booking-mail" id="bookingMail"></a>
-          <a class="btn btn-solid" id="bookingBtn">Contact</a>
-        </div>
+        <h2>Booking / MGMT</h2>
+        <a class="booking-mail" id="bookingMail"></a>
       </div>
     </section>
   </main>

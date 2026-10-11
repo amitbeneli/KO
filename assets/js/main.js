@@ -16,27 +16,21 @@
 
   $('#heroPlatforms').innerHTML = platformLinks(D.platforms);
   $('#footPlatforms').innerHTML = platformLinks(D.platforms);
-  $('#tagline').innerHTML = D.tagline.map(esc).join('<b>·</b>');
 
   const streaming = D.platforms.filter(p => ['spotify', 'applemusic', 'beatport', 'soundcloud', 'deezer'].includes(p.id));
-  const bandRun = streaming.concat(D.platforms.filter(p => p.id === 'youtube'))
-    .map(p => `<span class="band-item">${icon(p.id)}${p.name}</span><span class="band-item dot">✦</span>`).join('');
-  $('#band').innerHTML = bandRun + bandRun; // doubled for a seamless loop
 
   /* ---------- releases ---------- */
   const cover = r => r.cover
     ? `<img src="${r.cover}" alt="${esc(r.title)} cover" loading="lazy">`
-    : `<div class="cover-ph" style="position:absolute;inset:0"><small>${esc(r.artists)}</small><b>${esc(r.title)}</b><small>Artwork soon</small></div>`;
+    : `<div class="cover-ph"><small>${esc(r.artists)}</small><b>${esc(r.title)}</b></div>`;
 
   const featured = D.releases.filter(r => r.featured);
   $('#featured').innerHTML = featured.map(r => `
     <article class="feat reveal">
       <a class="cover" href="${r.url}" ${ext}>${cover(r)}</a>
       <div class="feat-body">
-        <span class="kicker">Out now${r.label ? ' · ' + esc(r.label) : ''}</span>
         <h3>${esc(r.title)}</h3>
-        ${r.subtitle ? `<span class="sub">${esc(r.subtitle)}</span>` : ''}
-        <span class="meta">${esc(r.artists)}${r.year ? ' — ' + r.year : ''}</span>
+        <span class="meta">${[r.subtitle || r.artists, r.label, r.year].filter(Boolean).map(esc).join('<i>/</i>')}</span>
         <div class="row">
           <a class="btn btn-solid" href="${r.url}" ${ext}>${PLAY} Listen</a>
           <nav class="platforms" aria-label="Stream ${esc(r.title)}">${platformLinks(streaming)}</nav>
@@ -77,8 +71,6 @@
     </${tag}>`;
   }).join('');
 
-  $('#gallery').innerHTML = D.gallery.map(src => `<figure><img src="${src}" alt="K.O live" loading="lazy"></figure>`).join('');
-
   $('#mixList').innerHTML = D.mixes.map(m => `
     <a class="mix reveal" href="${m.url}" ${ext}>
       <img src="${m.image}" alt="" loading="lazy">
@@ -87,11 +79,11 @@
     </a>`).join('');
 
   /* ---------- booking / footer ---------- */
-  $('#bookingMail').href = $('#bookingBtn').href = 'mailto:' + D.email;
+  $('#bookingMail').href = 'mailto:' + D.email;
   $('#bookingMail').textContent = D.email;
   $('#year').textContent = new Date().getFullYear();
 
-  /* ---------- 3D cube ---------- */
+  /* ---------- 3D cube, balanced on one corner so it reads as a pyramid ---------- */
   const ROT = ['rotateY(0deg)', 'rotateY(90deg)', 'rotateY(180deg)', 'rotateY(-90deg)', 'rotateX(90deg)', 'rotateX(-90deg)'];
   const cube = $('#cube'), stage = $('#cubeStage');
   cube.classList.add('exploded');
@@ -103,18 +95,21 @@
     const data = f.video ? `data-video="${f.video}" data-poster="${f.poster}"` : f.image ? `data-image="${f.image.replace('sq-', '')}"` : '';
     return `<div class="face${f.logo ? ' face-logo' : ''}" style="--rot:${ROT[i]};transition-delay:${i * 90}ms" ${data}>${inner}</div>`;
   }).join('');
-  const faceVideos = [...cube.children].slice(0, 4).map(f => f.querySelector('video'));
-  faceVideos.forEach(v => v && (v.muted = true));
-  // play only the side faces turned toward the viewer, so phones decode at most two clips
-  const syncFaces = () => faceVideos.forEach((v, i) => {
-    if (!v) return;
-    const facing = Math.cos((ry + i * 90) * Math.PI / 180) > -0.15;
-    if (facing && v.paused) v.play().catch(() => {});
-    else if (!facing && !v.paused) v.pause();
+  const faces = [...cube.children].map((f, i) => ({ v: f.querySelector('video'), rot: ROT[i] }));
+  faces.forEach(f => f.v && (f.v.muted = true));
+  // stand the cube on a corner: its body diagonal becomes the vertical axis
+  const CORNER = 'rotateX(-35.264deg) rotateZ(45deg)';
+  // play only faces turned toward the viewer (at most three on a corner-standing cube)
+  const syncFaces = transform => faces.forEach(f => {
+    if (!f.v) return;
+    const n = new DOMMatrix(transform + ' ' + f.rot).transformPoint(new DOMPoint(0, 0, 1, 0));
+    const facing = n.z > 0.05;
+    if (facing && f.v.paused) f.v.play().catch(() => {});
+    else if (!facing && !f.v.paused) f.v.pause();
   });
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let rx = -18, ry = 30, vx = 0, vy = reduce ? 0 : 9; // intro whip, eases down to cruise speed
+  let rx = -6, ry = 30, vx = 0, vy = reduce ? 0 : 9; // intro whip, eases down to cruise speed
   const cruise = reduce ? 0 : .22;
   let dragging = false, moved = 0, lx = 0, ly = 0, last = performance.now();
 
@@ -124,11 +119,12 @@
     const dt = Math.min(48, now - last) / 16.67; last = now;
     if (!dragging) {
       vy += (cruise - vy) * .02 * dt;
-      vx += ((-14 + Math.sin(now / 2600) * 10 - rx) * .002 - vx * .06) * dt;
+      vx += ((-6 + Math.sin(now / 2600) * 6 - rx) * .002 - vx * .06) * dt;
       ry += vy * dt; rx += vx * dt;
     }
-    cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-    syncFaces();
+    const t = `rotateX(${rx}deg) rotateY(${ry}deg) ${CORNER}`;
+    cube.style.transform = t;
+    syncFaces(t);
     requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
@@ -140,7 +136,7 @@
     if (!dragging) return;
     const dx = e.clientX - lx, dy = e.clientY - ly;
     moved += Math.abs(dx) + Math.abs(dy);
-    ry += dx * .45; rx = Math.max(-70, Math.min(70, rx - dy * .45));
+    ry += dx * .45; rx = Math.max(-25, Math.min(25, rx - dy * .3));
     vy = dx * .45; vx = -dy * .2;
     lx = e.clientX; ly = e.clientY;
   });
