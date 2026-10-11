@@ -23,24 +23,37 @@ window.KO = {
 
   releases: [
     // exact Spotify links and artwork confirmed against K.O (IL), artist 4dalkrTraIcooInb3IR0Di
-    { title: 'Lights Out', artists: 'K.O', label: 'GDB Records', year: 2025, featured: true,
+    { title: 'Lights Out', artists: 'K.O', label: 'GDB Records', year: 2026, featured: true,
       cover: 'https://i.scdn.co/image/ab67616d0000b273ee6e72024db07a910b28a665',
       links: { spotify: 'https://open.spotify.com/album/5Q93GMp7C87gLPbFMtOuWx' } },
-    { title: 'Overnight', subtitle: 'Broken Hill & K.O Remix', artists: 'Broken Hill & K.O', year: 2025, featured: true, latest: true,
-      cover: 'assets/media/covers/overnight.webp', search: 'Broken Hill Overnight K.O Remix',
-      links: {} },
+    // a remix of Parcels' "Overnight", released on SoundCloud
+    { title: 'Overnight', subtitle: 'Broken Hill & K.O Remix', artists: 'Parcels', year: 2026, featured: true, latest: true,
+      cover: 'assets/media/covers/overnight.webp', search: 'Parcels Overnight Broken Hill K.O Remix',
+      links: { soundcloud: 'https://soundcloud.com/komusic12323/parcels-overnight-broken-1' } },
     { title: 'Dont Push It', subtitle: 'Maccabi Edit', artists: 'K.O & Jackie', year: 2025, featured: true, latest: true,
       cover: null, search: 'K.O Jackie Dont Push It',
       links: {} },
     { title: 'Dance Floor', subtitle: 'From Lights Out', artists: 'K.O', latest: true,
       cover: 'https://i.scdn.co/image/ab67616d0000b273ee6e72024db07a910b28a665',
       links: { spotify: 'https://open.spotify.com/track/1aGrGPV8CacgonRYimPCfo' } },
-    { title: 'Just Grooving', subtitle: 'EP', artists: 'K.O', latest: true,
+    { title: 'Just Grooving', subtitle: 'EP', artists: 'K.O', year: 2025, latest: true,
       cover: 'https://i.scdn.co/image/ab67616d0000b273ec80d9a2a6a9de9b752e8d68',
       links: { spotify: 'https://open.spotify.com/album/4bHibxvu12VuGvvJ4vMrtF' } },
-    { title: 'Acid Master', artists: 'K.O', latest: true,
+    { title: 'Acid Master', artists: 'K.O', year: 2022, latest: true,
       cover: 'https://i.scdn.co/image/ab67616d0000b273d6800d4f28843d731c67a0b5',
       links: { spotify: 'https://open.spotify.com/album/6FkKRMI5VK2SxKa9c6jxJg' } }
+  ],
+
+  // Paste any Spotify / SoundCloud link here. The daily sync looks up its name and artwork
+  // and attaches it to the matching release (or adds it as a new release / mix).
+  inbox: [
+    'https://on.soundcloud.com/f9I0vmwxWtuxg1NNzH',
+    'https://on.soundcloud.com/4NZFlLxU3xKHwNaun3',
+    'https://on.soundcloud.com/prGqVVvGdZ1mnEXzts',
+    'https://on.soundcloud.com/Qy4JNaEx58UAHiiUIF',
+    'https://open.spotify.com/album/5Q93GMp7C87gLPbFMtOuWx',
+    'https://open.spotify.com/album/4bHibxvu12VuGvvJ4vMrtF',
+    'https://open.spotify.com/track/1D0F248C7WGb94iys3WxpN'
   ],
 
   mixes: [

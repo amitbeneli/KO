@@ -28,19 +28,42 @@
   ];
 
   /* ---------- merge the daily sync (exact links + hi-res covers) ---------- */
-  const added = [];
+  const tidy = a => (a ? a.replace(/\bK\.?O\b(\s*\(IL\))?/g, 'K.O') : 'K.O');
+  // "Parcels - Overnight (Broken Hill & K.O Remix)" belongs to the release "Overnight"
+  const findRelease = t => {
+    const n = norm(t.replace(/\(.*?\)/g, ' ')), full = norm(t);
+    return D.releases.find(r => norm(r.title) === full) ||
+      D.releases.find(r => norm(r.title).length >= 4 && (n.includes(norm(r.title)) || norm(r.title).includes(n)));
+  };
+  const attach = (r, platform, url, cover) => {
+    r.links = r.links || {};
+    if (!r.links[platform]) r.links[platform] = url;
+    if (cover && (!r.cover || r.cover.startsWith('assets/'))) r.cover = cover;
+  };
   (AUTO.releases || []).forEach(a => {
     const known = D.releases.find(r => norm(r.title) === norm(a.title));
     if (known) {
       known.links = { ...(a.links || {}), ...(known.links || {}) }; // hand-entered links win
       if (a.cover && (!known.cover || known.cover.startsWith('assets/'))) known.cover = a.cover;
+      known.date = known.date || a.date;
     } else {
-      const days = (Date.now() - Date.parse(a.date)) / 864e5;
-      added.push({ title: a.title, artists: a.artists, year: +String(a.date).slice(0, 4) || null, cover: a.cover,
-        links: a.links || {}, latest: true, featured: days <= 45 });
+      D.releases.push({ title: a.title, artists: tidy(a.artists), date: a.date, year: +String(a.date).slice(0, 4) || null,
+        cover: a.cover, links: a.links || {}, latest: true, featured: (Date.now() - Date.parse(a.date)) / 864e5 <= 45 });
     }
   });
-  D.releases = added.concat(D.releases); // the sync lists newest first
+  // links pasted into content.js `inbox`, resolved by the sync
+  const inboxMixes = [];
+  (AUTO.inbox || []).forEach(x => {
+    const r = findRelease(x.title);
+    if (r) attach(r, x.platform, x.url, x.cover);
+    else if (x.platform === 'spotify') D.releases.push({ title: x.title, artists: 'K.O', cover: x.cover, links: { spotify: x.url }, latest: true });
+    else inboxMixes.push({ title: x.title, by: 'SoundCloud', image: x.cover || 'assets/media/logo-ko.svg', url: x.url });
+  });
+  // SoundCloud uploads that are releases (e.g. the Overnight remix) link from that release
+  (AUTO.soundcloud || []).forEach(t => { const r = findRelease(t.title); if (r) attach(r, 'soundcloud', t.url); });
+  // newest first; a full date beats a bare year from the same year
+  const when = r => r.date || (r.year ? String(r.year) : '');
+  D.releases = D.releases.map((r, i) => [r, i]).sort((a, b) => when(b[0]).localeCompare(when(a[0])) || a[1] - b[1]).map(x => x[0]);
 
   const linksFor = r => {
     const q = encodeURIComponent(r.search || `K.O ${r.title}`);
@@ -113,12 +136,12 @@
   /* ---------- mixes: SoundCloud uploads that are not releases ---------- */
   const scNew = [];
   (AUTO.soundcloud || []).forEach(t => {
-    if (D.releases.some(r => norm(r.title) === norm(t.title))) return;
+    if (findRelease(t.title)) return; // already linked from its release
     const mix = D.mixes.find(m => norm(t.title).includes(norm(m.title)));
     if (mix) { if (!mix.synced) { mix.url = t.url; mix.synced = true; } } // newest episode
     else if (scNew.length < 6) scNew.push({ title: t.title, by: 'SoundCloud / ' + t.date.slice(0, 4), image: t.cover || 'assets/media/logo-ko.svg', url: t.url });
   });
-  D.mixes = scNew.concat(D.mixes);
+  D.mixes = scNew.concat(inboxMixes.filter(m => !scNew.some(n => n.url === m.url)), D.mixes);
   $('#mixList').innerHTML = D.mixes.map(m => `
     <a class="mix reveal" href="${m.url}" ${ext}>
       <img src="${m.image}" alt="" width="120" height="120" loading="lazy">

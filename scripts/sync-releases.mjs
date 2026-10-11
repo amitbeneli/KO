@@ -4,7 +4,8 @@
 // Sources (no keys needed unless noted):
 //   Deezer API ............ releases, dates, 1000px covers, Deezer links
 //   iTunes lookup API ..... Apple Music links (and covers when Deezer has none)
-//   song.link (Odesli) .... Spotify / YouTube / SoundCloud / Apple / Deezer for each release
+//   oEmbed ................ names + artwork for the links listed in content.js `inbox` (Spotify, SoundCloud)
+//   song.link (Odesli) .... optional, needs SONGLINK_API_KEY: fills Spotify / YouTube / SoundCloud per release
 //   Spotify API ........... optional, needs SPOTIFY_CLIENT_ID / SPOTIFY_CLIENT_SECRET
 //   SoundCloud RSS ........ tracks for the Mixes section
 //
@@ -73,10 +74,11 @@ async function spotify() {
   }));
 }
 
-// song.link: one release URL in, every platform's URL out. Free tier allows ~10 requests a minute.
+// song.link: one release URL in, every platform's URL out. Needs an API key since 2026.
+const SONGLINK_KEY = process.env.SONGLINK_API_KEY;
 async function songlink(url) {
   if (FX) return (await fixture('songlink.json'))[url] || {};
-  const d = await getJson(`https://api.song.link/v1-alpha.1/links?userCountry=IL&url=${encodeURIComponent(url)}`);
+  const d = await getJson(`https://api.song.link/v1-alpha.1/links?userCountry=IL&key=${SONGLINK_KEY}&url=${encodeURIComponent(url)}`);
   const p = d.linksByPlatform || {};
   const pick = k => p[k] && p[k].url;
   return Object.fromEntries(Object.entries({
@@ -116,6 +118,33 @@ async function settle(name, fn) {
   catch (e) { console.warn(`${name}: ${e.message}`); return null; }
 }
 
+// stores list K.O as "KO" or "K.O (IL)"; show it the way he writes it
+const tidyArtist = a => (a ? a.replace(/\bK\.?O\b(\s*\(IL\))?/g, 'K.O') : 'K.O');
+
+// Links pasted into content.js `inbox`: resolve each to its canonical URL, name and artwork via oEmbed.
+async function resolveInbox(urls, known) {
+  const out = [];
+  for (const src of urls) {
+    const cached = known.find(x => x.src === src);
+    if (cached) { out.push(cached); continue; }
+    try {
+      let url = src, title, cover, platform;
+      if (/soundcloud\.com/.test(src)) {
+        platform = 'soundcloud';
+        if (/on\.soundcloud\.com/.test(src)) url = (await fetch(src, { redirect: 'follow', headers: { 'User-Agent': 'Mozilla/5.0' } })).url.split('?')[0];
+        const o = await getJson(`https://soundcloud.com/oembed?format=json&url=${encodeURIComponent(url)}`);
+        title = o.title.replace(/\s+by\s+[^]+$/, ''); cover = o.thumbnail_url;
+      } else if (/open\.spotify\.com/.test(src)) {
+        platform = 'spotify'; url = src.split('?')[0];
+        const o = await getJson(`https://open.spotify.com/oembed?url=${encodeURIComponent(url)}`);
+        title = o.title; cover = o.thumbnail_url;
+      } else continue;
+      out.push({ src, platform, url, title, cover });
+    } catch (e) { console.warn(`inbox ${src}: ${e.message}`); }
+  }
+  return out;
+}
+
 const prev = await readFile(OUT, 'utf8')
   .then(s => JSON.parse(s.slice(s.indexOf('{'), s.lastIndexOf('}') + 1))).catch(() => ({}));
 
@@ -130,9 +159,9 @@ const byKey = new Map();
 for (const list of [sources.deezer, sources.spotify, sources.apple]) {
   for (const r of list || []) {
     const k = norm(r.title);
-    const cur = byKey.get(k) || { title: r.title, artists: r.artists || 'K.O', date: r.date, cover: r.cover, links: {} };
+    const cur = byKey.get(k) || { title: r.title, artists: tidyArtist(r.artists), date: r.date, cover: r.cover, links: {} };
     cur.cover = cur.cover || r.cover;
-    if (r.artists && cur.artists === 'K.O') cur.artists = r.artists;
+    if (r.artists && cur.artists === 'K.O') cur.artists = tidyArtist(r.artists);
     Object.assign(cur.links, Object.fromEntries(Object.entries(r.links).filter(([p]) => !cur.links[p])));
     byKey.set(k, cur);
   }
@@ -150,7 +179,7 @@ for (const [k, r] of byKey) {
   const missing = ['spotify', 'applemusic', 'deezer', 'youtube', 'soundcloud'].some(p => !r.links[p]);
   const seed = r.links.deezer || r.links.applemusic || r.links.spotify;
   // ask once, then again only every 30 days for releases that are still missing platforms
-  if (!missing || !seed || (r.songlinkChecked && Date.now() - Date.parse(r.songlinkChecked) < 30 * 864e5)) continue;
+  if ((!SONGLINK_KEY && !FX) || !missing || !seed || (r.songlinkChecked && Date.now() - Date.parse(r.songlinkChecked) < 30 * 864e5)) continue;
   try {
     if (calls++ && !FX) await sleep(7000);
     const found = await songlink(seed);
@@ -165,9 +194,14 @@ const releases = [...byKey.values()]
     links: Object.fromEntries(Object.entries(r.links).sort()), ...(r.songlinkChecked ? { songlinkChecked: r.songlinkChecked } : {}) }))
   .sort((a, b) => (b.date || '').localeCompare(a.date || '') || a.title.localeCompare(b.title));
 const sc = (await settle('SoundCloud', soundcloud)) ?? prev.soundcloud ?? [];
-const data = { releases, soundcloud: sc };
+const contentSrc = await readFile(new URL('../assets/js/content.js', import.meta.url), 'utf8');
+const inboxUrls = [...(contentSrc.match(/inbox:\s*\[([\s\S]*?)\]/) || ['', ''])[1].matchAll(/'([^']+)'/g)].map(m => m[1]);
+const inbox = FX ? (prev.inbox ?? []) : await resolveInbox(inboxUrls, prev.inbox ?? []);
+console.log(`Inbox: ${inbox.length} of ${inboxUrls.length} links resolved`);
+for (const x of inbox) console.log(`   ${x.platform}: ${x.title} -> ${x.url}`);
+const data = { releases, soundcloud: sc, inbox };
 
-if (JSON.stringify({ releases: prev.releases ?? [], soundcloud: prev.soundcloud ?? [] }) === JSON.stringify(data)) {
+if (JSON.stringify({ releases: prev.releases ?? [], soundcloud: prev.soundcloud ?? [], inbox: prev.inbox ?? [] }) === JSON.stringify(data)) {
   console.log('No changes.'); process.exit(0);
 }
 await writeFile(OUT, `/* Generated daily by scripts/sync-releases.mjs. Do not edit; put manual content in content.js. */\nwindow.KO_AUTO = ${JSON.stringify({ updated: new Date().toISOString().slice(0, 10), ...data }, null, 1)};\n`);
