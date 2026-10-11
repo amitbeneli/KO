@@ -1,6 +1,6 @@
 # K.O — artist site
 
-Static, no build step. **Live at https://amitbeneli.github.io/KO/** (published by `.github/workflows/deploy.yml` on every push and after each release sync).
+Static, no build step. **Live at https://ko.sako-mgmt.com/** (GitHub Pages; also reachable at amitbeneli.github.io/KO) (published by `.github/workflows/deploy.yml` on every push and after each release sync).
 
 Run locally: `python3 -m http.server` in this folder.
 
@@ -28,4 +28,7 @@ Test offline: `node scripts/sync-releases.mjs --fixtures <dir>` with `spotify.js
 
 ## Custom domain
 
-When K.O gets a domain: add it under Settings → Pages → Custom domain, then replace `https://amitbeneli.github.io/KO/` in `index.html` (canonical, og:url, og:image, JSON-LD), `robots.txt` and `sitemap.xml`, and the `/KO/` paths in `404.html`.
+The site is served at `ko.sako-mgmt.com`:
+- DNS (at the sako-mgmt.com registrar): a `CNAME` record `ko` → `amitbeneli.github.io`.
+- GitHub: Settings → Pages → Custom domain = `ko.sako-mgmt.com`, then tick **Enforce HTTPS** once the certificate is issued.
+- The domain also appears in `index.html` (canonical, og:url, og:image, JSON-LD), `robots.txt`, `sitemap.xml` and `CNAME`.
