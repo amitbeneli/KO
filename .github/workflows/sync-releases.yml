@@ -1,10 +1,10 @@
 name: Sync releases
 
-# Every day: pull K.O's catalogue from Spotify and SoundCloud and commit any change
+# Every day (08:17 Israel time): pull K.O's catalogue from Spotify and SoundCloud and commit any change
 # to assets/js/auto-releases.js. Run it by hand from the Actions tab with "Run workflow".
 on:
   schedule:
-    - cron: "17 5 * * *" # 08:17 Israel summer time
+    - cron: "17 5 * * *" # 05:17 UTC
   workflow_dispatch:
 
 permissions:
