@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://amitbeneli.github.io/KO/sitemap.xml

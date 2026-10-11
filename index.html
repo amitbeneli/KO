@@ -5,16 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>K.O — DJ & Producer</title>
   <meta name="description" content="K.O — Israeli DJ & producer. New releases, live sets, mixes and booking.">
-  <meta name="theme-color" content="#060606">
+  <meta name="theme-color" content="#070506">
+  <link rel="canonical" href="https://amitbeneli.github.io/KO/">
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="K.O">
+  <meta property="og:url" content="https://amitbeneli.github.io/KO/">
   <meta property="og:title" content="K.O — DJ & Producer">
   <meta property="og:description" content="New releases, live sets, mixes and booking.">
-  <meta property="og:image" content="assets/media/og.jpg">
+  <meta property="og:image" content="https://amitbeneli.github.io/KO/assets/media/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://amitbeneli.github.io/KO/assets/media/og.jpg">
   <link rel="icon" href="assets/media/logo-ko.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/media/apple-touch-icon.png">
+  <link rel="preload" href="assets/media/logo-ko.svg" as="image">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "MusicGroup", "name": "K.O", "url": "https://amitbeneli.github.io/KO/", "image": "https://amitbeneli.github.io/KO/assets/media/og.jpg", "genre": ["House", "Electronic"], "description": "K.O is an Israeli DJ and producer.", "email": "K.O@sako-mgmt.com", "sameAs": ["https://open.spotify.com/artist/4dalkrTraIcooInb3IR0Di", "https://music.apple.com/il/artist/ko/1524847482", "https://www.beatport.com/artist/ko-il/1085079", "https://on.soundcloud.com/sedm5H5yJz75iUqP8", "https://www.youtube.com/@k.o4music", "https://www.deezer.com/en/artist/185522127", "https://www.instagram.com/k.omusic", "https://www.facebook.com/share/1C5k2kMW2U/"]}</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..700&display=swap">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..700&display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -31,7 +42,7 @@
     <div class="hero-inner">
       <div class="logo-wrap"><img class="logo" src="assets/media/logo-ko.svg" alt="K.O" width="529" height="272" fetchpriority="high"></div>
 
-      <div class="cube-stage" id="cubeStage" aria-label="Live clips. Drag to spin, tap a face to watch">
+      <div class="cube-stage" id="cubeStage" role="button" tabindex="0" aria-label="Live clips. Drag to spin, tap a face to watch">
         <div class="cube" id="cube"></div>
         <div class="cube-floor" aria-hidden="true"></div>
       </div>
@@ -50,6 +61,10 @@
     <a href="#mixes">Videos & Mixes</a>
     <a href="#booking">Booking</a>
   </nav>
+
+  <noscript>
+    <p style="text-align:center;padding:40px 16px">Booking / MGMT: K.O@sako-mgmt.com · <a href="https://open.spotify.com/artist/4dalkrTraIcooInb3IR0Di">Spotify</a> · <a href="https://www.instagram.com/k.omusic">Instagram</a></p>
+  </noscript>
 
   <main>
     <section id="out-now" class="section">
@@ -87,7 +102,7 @@
   </footer>
 
   <!-- LIGHTBOX -->
-  <div class="lightbox" id="lightbox" hidden>
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Live clip" hidden>
     <button class="lb-close" id="lbClose" aria-label="Close">×</button>
     <div class="lb-frame" id="lbFrame"></div>
     <button class="lb-sound" id="lbSound" hidden>Sound on</button>

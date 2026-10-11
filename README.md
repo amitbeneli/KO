@@ -1,6 +1,8 @@
 # K.O — artist site
 
-Static, no build step. Open `index.html` through any static server (`python3 -m http.server`) or deploy the folder to Netlify / Vercel as-is.
+Static, no build step. **Live at https://amitbeneli.github.io/KO/** (published by `.github/workflows/deploy.yml` on every push and after each release sync).
+
+Run locally: `python3 -m http.server` in this folder.
 
 - **All content** lives in `assets/js/content.js`. Adding a release means adding one object to `releases` (`featured: true` puts it in OUT NOW; `cover: null` shows a branded placeholder).
 - Lines marked `TODO` in `content.js` still need real links or artwork (per-track links, YouTube set links, covers for Dont Push It / Dance Floor / Just Grooving).
@@ -23,3 +25,7 @@ The site merges that file with `content.js`:
 **One-time setup for Spotify:** create an app at https://developer.spotify.com/dashboard. Then add its Client ID and Client Secret as repository secrets named `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` (Settings → Secrets and variables → Actions). Without them the SoundCloud sync still runs and Spotify is skipped.
 
 Test offline: `node scripts/sync-releases.mjs --fixtures <dir>` with `spotify.json` and `soundcloud.rss` in `<dir>`.
+
+## Custom domain
+
+When K.O gets a domain: add it under Settings → Pages → Custom domain, then replace `https://amitbeneli.github.io/KO/` in `index.html` (canonical, og:url, og:image, JSON-LD), `robots.txt` and `sitemap.xml`, and the `/KO/` paths in `404.html`.

@@ -39,13 +39,13 @@ window.KO = {
   // Clips with `video` play muted inline; `url` is used for full sets on YouTube.
   live: [
     { title: 'Main Stage', place: 'Festival · Live 2025', video: 'assets/media/video/live-red-stage.mp4',
-      poster: 'assets/media/video/live-red-stage.jpg', wide: true },
+      poster: 'assets/media/video/live-red-stage.webp', wide: true },
     { title: 'Warehouse Night', place: 'Live 2025', video: 'assets/media/video/live-warehouse.mp4',
-      poster: 'assets/media/video/live-warehouse.jpg' },
+      poster: 'assets/media/video/live-warehouse.webp' },
     { title: 'Into the Smoke', place: 'Festival · Live 2025', video: 'assets/media/video/live-festival-crowd.mp4',
-      poster: 'assets/media/video/live-festival-crowd.jpg' },
+      poster: 'assets/media/video/live-festival-crowd.webp' },
     { title: 'Rooftop Sunset', place: 'Zorka · Live 2025', video: 'assets/media/video/live-rooftop.mp4',
-      poster: 'assets/media/video/live-rooftop.jpg' },
+      poster: 'assets/media/video/live-rooftop.webp' },
     { title: 'Adloyada Festival', place: 'Purim · Kineret 2025', image: 'assets/media/photos/always-here.webp',
       url: 'https://www.youtube.com/@k.o4music' } // TODO: YouTube URL
   ],
@@ -55,12 +55,13 @@ window.KO = {
       url: 'https://on.soundcloud.com/sedm5H5yJz75iUqP8' } // TODO: episode URL
   ],
 
-  // The 3D cube in the hero: faces 1-4 are the sides, 5 top, 6 bottom. Video faces autoplay muted.
+  // The 3D cube in the hero: faces 1-4 are the sides, 5 top, 6 bottom.
+  // Video faces play small square cuts (muted); tapping a face opens the `full` clip.
   cube: [
-    { video: 'assets/media/video/live-red-stage.mp4', poster: 'assets/media/video/live-red-stage.jpg' },
-    { video: 'assets/media/video/live-warehouse.mp4', poster: 'assets/media/video/live-warehouse.jpg' },
-    { video: 'assets/media/video/live-festival-crowd.mp4', poster: 'assets/media/video/live-festival-crowd.jpg' },
-    { video: 'assets/media/video/live-rooftop.mp4', poster: 'assets/media/video/live-rooftop.jpg' },
+    { video: 'assets/media/video/live-red-stage-cube.mp4', full: 'assets/media/video/live-red-stage.mp4', poster: 'assets/media/video/live-red-stage.webp' },
+    { video: 'assets/media/video/live-warehouse-cube.mp4', full: 'assets/media/video/live-warehouse.mp4', poster: 'assets/media/video/live-warehouse.webp' },
+    { video: 'assets/media/video/live-festival-crowd-cube.mp4', full: 'assets/media/video/live-festival-crowd.mp4', poster: 'assets/media/video/live-festival-crowd.webp' },
+    { video: 'assets/media/video/live-rooftop-cube.mp4', full: 'assets/media/video/live-rooftop.mp4', poster: 'assets/media/video/live-rooftop.webp' },
     { logo: true },
     { image: 'assets/media/photos/sq-hands-up.webp' }
   ]
