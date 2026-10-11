@@ -1,0 +1,107 @@
+  <title>K.O Artist Site</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-glow"></div>
+      <div class="hero-photo"></div>
+      <div class="hero-beams"><i></i><i></i><i></i></div>
+    </div>
+
+    <div class="hero-inner">
+      <img class="logo" src="assets/media/logo-ko.png" alt="K.O" width="1054" height="538" fetchpriority="high">
+      <p class="tagline" id="tagline"></p>
+
+      <div class="cube-stage" id="cubeStage" aria-label="Live moments — drag to spin, tap to open">
+        <div class="cube" id="cube"></div>
+        <div class="cube-floor" aria-hidden="true"></div>
+      </div>
+      <p class="cube-hint">Drag to spin · Tap to watch</p>
+
+      <nav class="platforms" id="heroPlatforms" aria-label="Listen on"></nav>
+    </div>
+
+    <a class="scroll-cue" href="#out-now" aria-label="Scroll to music"><span></span></a>
+  </header>
+
+  <!-- PLATFORM BAND -->
+  <div class="band" aria-hidden="true"><div class="band-track" id="band"></div></div>
+
+  <!-- STICKY NAV -->
+  <nav class="chips" id="chips" aria-label="Sections">
+    <a href="#out-now">Out Now</a>
+    <a href="#releases">Latest Releases</a>
+    <a href="#live">K.O Live 2025</a>
+    <a href="#mixes">Videos & Mixes</a>
+    <a href="#booking">Booking</a>
+  </nav>
+
+  <main>
+    <section id="out-now" class="section">
+      <div class="section-head reveal">
+        <span class="kicker">01 — Out now</span>
+        <h2>New <em>music</em></h2>
+      </div>
+      <div class="featured" id="featured"></div>
+    </section>
+
+    <section id="releases" class="section">
+      <div class="section-head reveal">
+        <span class="kicker">02 — Discography</span>
+        <h2>Latest <em>releases</em></h2>
+      </div>
+      <div class="grid" id="releaseGrid"></div>
+    </section>
+
+    <section id="live" class="section">
+      <div class="section-head reveal">
+        <span class="kicker">03 — On stage</span>
+        <h2>K.O <em>Live</em> 2025</h2>
+      </div>
+      <div class="live" id="liveGrid"></div>
+      <div class="gallery reveal" id="gallery"></div>
+    </section>
+
+    <section id="mixes" class="section">
+      <div class="section-head reveal">
+        <span class="kicker">04 — Listen in</span>
+        <h2>Videos <em>&amp;</em> mixes</h2>
+      </div>
+      <div class="mixes" id="mixList"></div>
+    </section>
+
+    <section id="booking" class="section">
+      <div class="booking reveal">
+        <img src="assets/media/covers/booking-cow.webp" alt="" class="booking-art" loading="lazy">
+        <div class="booking-body">
+          <span class="kicker">05 — Management & booking</span>
+          <h2>Bring K.O <em>to your night</em></h2>
+          <a class="booking-mail" id="bookingMail"></a>
+          <a class="btn btn-solid" id="bookingBtn">Contact</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <img src="assets/media/logo-ko.png" alt="K.O" class="footer-logo" loading="lazy" width="1054" height="538">
+    <nav class="platforms platforms-sm" id="footPlatforms" aria-label="Social"></nav>
+    <p>© <span id="year"></span> K.O. All rights reserved.</p>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lb-close" id="lbClose" aria-label="Close">×</button>
+    <div class="lb-frame" id="lbFrame"></div>
+    <button class="lb-sound" id="lbSound" hidden>Sound on</button>
+  </div>
+
+  <script src="assets/js/icons.js"></script>
+  <script src="assets/js/content.js"></script>
+  <script src="assets/js/main.js"></script>
