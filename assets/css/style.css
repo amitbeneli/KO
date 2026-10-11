@@ -112,24 +112,28 @@ h2 { font-size: clamp(26px, 6vw, 46px); }
 }
 @media (min-width: 900px) { .cube-stage { --s: 210px; } }
 .cube-stage:active { cursor: grabbing; }
-.cube { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+.cube { position: absolute; inset: 0; transform-style: preserve-3d; }
+/* faces are laid out at 3x and scaled down in 3D, so browsers rasterize them sharp instead of pixelated */
 .face {
-  position: absolute; inset: 0; overflow: hidden; background: #000;
-  border: 1px solid var(--red-dim);
-  box-shadow: inset 0 0 24px rgba(200, 16, 46, .25);
+  --k: 3;
+  position: absolute; left: calc(var(--s) * -1); top: calc(var(--s) * -1);
+  width: calc(var(--s) * var(--k)); height: calc(var(--s) * var(--k));
+  overflow: hidden; background: #000;
+  border: 3px solid var(--red-dim);
+  box-shadow: inset 0 0 72px rgba(200, 16, 46, .25);
   backface-visibility: hidden;
-  transform: var(--rot) translateZ(calc(var(--s) / 2 + var(--burst, 0px)));
+  transform: var(--rot) translateZ(calc(var(--s) / 2 + var(--burst, 0px))) scale(calc(1 / var(--k)));
   opacity: var(--o, 1);
   transition: transform 1.4s var(--ease), opacity 1s ease;
 }
 .cube.exploded .face { --burst: calc(var(--s) * 1.4); --o: 0; }
 .face img, .face video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-.face::after {
+.face:not(.face-logo)::after {
   content: ""; position: absolute; inset: 0;
   background: linear-gradient(135deg, rgba(255, 255, 255, .1), transparent 45%, rgba(200, 16, 46, .14));
 }
 .face-logo { display: grid; place-items: center; background: radial-gradient(circle, #1c0408, #000 70%); }
-.face-logo img { width: 80%; height: auto; object-fit: contain; }
+.face-logo img { width: 84%; height: auto; object-fit: contain; }
 .cube-floor {
   position: absolute; left: 50%; bottom: calc(var(--s) * -.85); width: 150%; height: 34px;
   transform: translateX(-50%);
