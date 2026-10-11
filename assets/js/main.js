@@ -9,6 +9,32 @@
   const sources = src => `<source src="${src}" type="video/mp4"><source src="${src.replace(/\.mp4$/, '.webm')}" type="video/webm">`;
   const ARROW = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg>';
 
+  /* ---------- merge the daily Spotify / SoundCloud sync (auto-releases.js) ---------- */
+  const AUTO = window.KO_AUTO || {};
+  const norm = t => String(t).toLowerCase().replace(/\(.*?\)|\[.*?\]/g, '').replace(/[^a-z0-9]/g, '');
+  const generic = url => !url || /\/artist\/|on\.soundcloud\.com|@k\.o4music/.test(url);
+  const daysAgo = d => (Date.now() - Date.parse(d)) / 864e5;
+  const added = [];
+  (AUTO.spotify || []).forEach(a => {
+    const known = D.releases.find(r => norm(r.title) === norm(a.title));
+    if (known) {
+      known.cover = known.cover || a.cover;
+      if (generic(known.url)) known.url = a.url;
+    } else {
+      added.push({ title: a.title, artists: a.artists, year: +a.date.slice(0, 4), cover: a.cover, url: a.url,
+        latest: true, featured: daysAgo(a.date) <= 45 });
+    }
+  });
+  D.releases = added.concat(D.releases); // Spotify order is newest first
+  const scNew = [];
+  (AUTO.soundcloud || []).forEach(t => {
+    if (D.releases.some(r => norm(r.title) === norm(t.title))) return;
+    const mix = D.mixes.find(m => norm(t.title).includes(norm(m.title)) && generic(m.url));
+    if (mix) { mix.url = t.url; mix.image = mix.image || t.cover; }
+    else if (scNew.length < 6) scNew.push({ title: t.title, by: 'SoundCloud / ' + t.date.slice(0, 4), image: t.cover || 'assets/media/logo-ko.png', url: t.url });
+  });
+  D.mixes = scNew.concat(D.mixes);
+
   /* ---------- platforms ---------- */
   const platformLinks = list => list.map(p => p.url
     ? `<a href="${p.url}" ${ext} aria-label="${p.name}" title="${p.name}">${icon(p.id)}</a>`
@@ -24,7 +50,7 @@
     ? `<img src="${r.cover}" alt="${esc(r.title)} cover" loading="lazy">`
     : `<div class="cover-ph"><small>${esc(r.artists)}</small><b>${esc(r.title)}</b></div>`;
 
-  const featured = D.releases.filter(r => r.featured);
+  const featured = D.releases.filter(r => r.featured).slice(0, 4);
   $('#featured').innerHTML = featured.map(r => `
     <article class="feat reveal">
       <a class="cover" href="${r.url}" ${ext}>${cover(r)}</a>
@@ -50,7 +76,7 @@
     });
   }
 
-  $('#releaseGrid').innerHTML = D.releases.filter(r => r.latest || !r.featured).map((r, i) => `
+  $('#releaseGrid').innerHTML = D.releases.filter(r => r.latest || !r.featured).slice(0, 8).map((r, i) => `
     <a class="rel reveal" href="${r.url}" ${ext} style="transition-delay:${i * 70}ms">
       <div class="cover">${cover(r)}<span class="play">${PLAY}</span></div>
       <h3>${esc(r.title)}</h3>
