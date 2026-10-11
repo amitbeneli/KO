@@ -17,7 +17,7 @@ window.KO = {
     { id: 'youtube',    name: 'YouTube',     url: 'https://www.youtube.com/@k.o4music' },
     { id: 'deezer',     name: 'Deezer',      url: 'https://www.deezer.com/en/artist/185522127' },
     { id: 'instagram',  name: 'Instagram',   url: 'https://www.instagram.com/k.omusic' },
-    { id: 'facebook',   name: 'Facebook',    url: null } // TODO: Facebook URL
+    { id: 'facebook',   name: 'Facebook',    url: 'https://www.facebook.com/share/1C5k2kMW2U/' }
   ],
 
   releases: [
