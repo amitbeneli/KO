@@ -1,5 +1,5 @@
 (() => {
-  const D = window.KO, ICONS = window.KO_ICONS;
+  const D = window.KO, ICONS = window.KO_ICONS, AUTO = window.KO_AUTO || {};
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s = '') => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const icon = id => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${ICONS[id] || ''}"/></svg>`;
@@ -8,42 +8,50 @@
   // MP4 for Safari/iOS, WebM fallback for browsers without H.264
   const sources = src => `<source src="${src}" type="video/mp4"><source src="${src.replace(/\.mp4$/, '.webm')}" type="video/webm">`;
   const ARROW = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 17L17 7M9 7h8v8"/></svg>';
-
-  /* ---------- merge the daily Spotify / SoundCloud sync (auto-releases.js) ---------- */
-  const AUTO = window.KO_AUTO || {};
   const norm = t => String(t).toLowerCase().replace(/\(.*?\)|\[.*?\]/g, '').replace(/[^a-z0-9]/g, '');
-  const generic = url => !url || /\/artist\/|on\.soundcloud\.com|@k\.o4music/.test(url);
-  const daysAgo = d => (Date.now() - Date.parse(d)) / 864e5;
-  const added = [];
-  (AUTO.spotify || []).forEach(a => {
-    const known = D.releases.find(r => norm(r.title) === norm(a.title));
-    if (known) {
-      known.cover = a.cover || known.cover; // Spotify artwork beats the screenshot crops
-      if (generic(known.url)) known.url = a.url;
-    } else {
-      added.push({ title: a.title, artists: a.artists, year: +a.date.slice(0, 4), cover: a.cover, url: a.url,
-        latest: true, featured: daysAgo(a.date) <= 45 });
-    }
-  });
-  D.releases = added.concat(D.releases); // Spotify order is newest first
-  const scNew = [];
-  (AUTO.soundcloud || []).forEach(t => {
-    if (D.releases.some(r => norm(r.title) === norm(t.title))) return;
-    const mix = D.mixes.find(m => norm(t.title).includes(norm(m.title)) && generic(m.url));
-    if (mix) { mix.url = t.url; mix.image = mix.image || t.cover; }
-    else if (scNew.length < 6) scNew.push({ title: t.title, by: 'SoundCloud / ' + t.date.slice(0, 4), image: t.cover || 'assets/media/logo-ko.svg', url: t.url });
-  });
-  D.mixes = scNew.concat(D.mixes);
 
   /* ---------- platforms ---------- */
   const platformLinks = list => list.map(p => p.url
     ? `<a href="${p.url}" ${ext} aria-label="${p.name}" title="${p.name}">${icon(p.id)}</a>`
     : `<a aria-disabled="true" aria-label="${p.name} (coming soon)">${icon(p.id)}</a>`).join('');
-
   $('#heroPlatforms').innerHTML = platformLinks(D.platforms);
   $('#footPlatforms').innerHTML = platformLinks(D.platforms);
 
-  const streaming = D.platforms.filter(p => ['spotify', 'applemusic', 'beatport', 'soundcloud', 'deezer'].includes(p.id));
+  // where each streaming platform searches, for releases without an exact link yet
+  const STREAMING = [
+    ['spotify', 'Spotify', q => `https://open.spotify.com/search/${q}`],
+    ['applemusic', 'Apple Music', q => `https://music.apple.com/il/search?term=${q}`],
+    ['beatport', 'Beatport', q => `https://www.beatport.com/search?q=${q}`],
+    ['soundcloud', 'SoundCloud', q => `https://soundcloud.com/search?q=${q}`],
+    ['deezer', 'Deezer', q => `https://www.deezer.com/search/${q}`],
+    ['youtube', 'YouTube', q => `https://www.youtube.com/results?search_query=${q}`]
+  ];
+
+  /* ---------- merge the daily sync (exact links + hi-res covers) ---------- */
+  const added = [];
+  (AUTO.releases || []).forEach(a => {
+    const known = D.releases.find(r => norm(r.title) === norm(a.title));
+    if (known) {
+      known.links = { ...(a.links || {}), ...(known.links || {}) }; // hand-entered links win
+      if (a.cover && (!known.cover || known.cover.startsWith('assets/'))) known.cover = a.cover;
+    } else {
+      const days = (Date.now() - Date.parse(a.date)) / 864e5;
+      added.push({ title: a.title, artists: a.artists, year: +String(a.date).slice(0, 4) || null, cover: a.cover,
+        links: a.links || {}, latest: true, featured: days <= 45 });
+    }
+  });
+  D.releases = added.concat(D.releases); // the sync lists newest first
+
+  const linksFor = r => {
+    const q = encodeURIComponent(r.search || `K.O ${r.title}`);
+    return STREAMING.map(([id, name, search]) => {
+      const exact = r.links && r.links[id];
+      return { id, name, url: exact || search(q), exact: !!exact };
+    });
+  };
+  const mainLink = r => { const l = linksFor(r); return (l.find(x => x.exact && x.id === 'spotify') || l.find(x => x.exact) || l[0]).url; };
+  const releaseIcons = r => linksFor(r).map(l =>
+    `<a href="${l.url}" ${ext} aria-label="${esc(r.title)} on ${l.name}" title="${l.name}${l.exact ? '' : ' (search)'}">${icon(l.id)}</a>`).join('');
 
   /* ---------- releases ---------- */
   const cover = r => r.cover
@@ -53,16 +61,23 @@
   const featured = D.releases.filter(r => r.featured).slice(0, 4);
   $('#featured').innerHTML = featured.map(r => `
     <article class="feat reveal">
-      <a class="cover" href="${r.url}" ${ext}>${cover(r)}</a>
+      <a class="cover" href="${mainLink(r)}" ${ext} aria-label="Listen to ${esc(r.title)}">${cover(r)}</a>
       <div class="feat-body">
         <h3>${esc(r.title)}</h3>
         <span class="meta">${[r.subtitle || r.artists, r.label, r.year].filter(Boolean).map(esc).join('<i>/</i>')}</span>
         <div class="row">
-          <a class="btn btn-solid" href="${r.url}" ${ext}>${PLAY} Listen</a>
-          <nav class="platforms" aria-label="Stream ${esc(r.title)}">${platformLinks(streaming)}</nav>
+          <a class="btn" href="${mainLink(r)}" ${ext}>${PLAY} Listen</a>
+          <nav class="platforms" aria-label="Stream ${esc(r.title)}">${releaseIcons(r)}</nav>
         </div>
       </div>
     </article>`).join('');
+
+  // under the cube: the newest release, one tap from playing
+  if (featured[0]) {
+    const np = $('#nowPlaying'), r = featured[0];
+    np.href = mainLink(r);
+    np.innerHTML = `<span class="now-tag">New</span><span class="now-title">${esc(r.title)}</span><span class="now-go">${PLAY} Listen</span>`;
+  } else $('#nowPlaying').remove();
 
   if (featured.length > 1) {
     const nav = document.createElement('div');
@@ -82,26 +97,28 @@
   }
 
   $('#releaseGrid').innerHTML = D.releases.filter(r => r.latest || !r.featured).slice(0, 8).map((r, i) => `
-    <a class="rel reveal" href="${r.url}" ${ext} style="transition-delay:${i * 70}ms">
-      <div class="cover">${cover(r)}<span class="play">${PLAY}</span></div>
+    <article class="rel reveal" style="transition-delay:${i * 70}ms">
+      <a class="cover" href="${mainLink(r)}" ${ext} aria-label="Listen to ${esc(r.title)}">${cover(r)}<span class="play">${PLAY}</span></a>
       <h3>${esc(r.title)}</h3>
       <p>${esc(r.subtitle || r.artists)}</p>
-    </a>`).join('');
+      <nav class="platforms rel-links" aria-label="Stream ${esc(r.title)}">${releaseIcons(r)}</nav>
+    </article>`).join('');
 
-  /* ---------- live ---------- */
-  $('#liveGrid').innerHTML = D.live.map((c, i) => {
-    const media = c.video
-      ? `<video muted loop playsinline preload="none" poster="${c.poster}" data-lazy>${sources(c.video)}</video>`
-      : `<img src="${c.image}" alt="" loading="lazy">`;
-    const attrs = c.video ? `type="button" data-video="${c.video}" data-poster="${c.poster}"` : `href="${c.url}" ${ext}`;
-    const tag = c.video ? 'button' : 'a';
-    return `<${tag} class="clip reveal${c.wide ? ' wide' : ''}" ${attrs} style="transition-delay:${i * 90}ms">
-      ${media}
-      <span class="clip-badge ${c.video ? 'rec' : ''}">${c.video ? 'Live clip' : 'YouTube'}</span>
-      <div class="clip-info"><h3>${esc(c.title)}</h3><p>${esc(c.place)}</p></div>
-    </${tag}>`;
-  }).join('');
+  // a cover that fails to load (e.g. a CDN hiccup) falls back to the branded placeholder
+  document.querySelectorAll('.cover img').forEach(img => img.addEventListener('error', () => {
+    const t = img.alt.replace(/ cover$/, '');
+    img.outerHTML = `<div class="cover-ph"><small>K.O</small><b>${esc(t)}</b></div>`;
+  }, { once: true }));
 
+  /* ---------- mixes: SoundCloud uploads that are not releases ---------- */
+  const scNew = [];
+  (AUTO.soundcloud || []).forEach(t => {
+    if (D.releases.some(r => norm(r.title) === norm(t.title))) return;
+    const mix = D.mixes.find(m => norm(t.title).includes(norm(m.title)));
+    if (mix) { if (!mix.synced) { mix.url = t.url; mix.synced = true; } } // newest episode
+    else if (scNew.length < 6) scNew.push({ title: t.title, by: 'SoundCloud / ' + t.date.slice(0, 4), image: t.cover || 'assets/media/logo-ko.svg', url: t.url });
+  });
+  D.mixes = scNew.concat(D.mixes);
   $('#mixList').innerHTML = D.mixes.map(m => `
     <a class="mix reveal" href="${m.url}" ${ext}>
       <img src="${m.image}" alt="" width="120" height="120" loading="lazy">
@@ -144,7 +161,6 @@
     if (media && best) media.style.transform = `rotate(${best}deg)`;
   });
   faces.forEach(f => f.v && (f.v.muted = true));
-  // stand the cube on a corner: its body diagonal becomes the vertical axis
   // play only faces turned toward the viewer (at most three on a corner-standing cube)
   const syncFaces = () => {
     const sy = Math.sin(ry * Math.PI / 180), cy = Math.cos(ry * Math.PI / 180);
@@ -165,6 +181,7 @@
 
   setTimeout(() => cube.classList.remove('exploded'), 250);
 
+  const tc = $('#timecode'), t0 = performance.now(); let lastF = -1;
   const tick = now => {
     const dt = Math.min(48, now - last) / 16.67; last = now;
     if (!dragging) {
@@ -173,6 +190,9 @@
       ry += vy * dt; rx += vx * dt;
     }
     cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) ${CORNER}`;
+    // camera timecode, 25 fps
+    const f = Math.floor((now - t0) / 40), p2 = n => String(n).padStart(2, '0');
+    if (f !== lastF) { lastF = f; tc.textContent = `${p2(Math.floor(f / 90000) % 24)}:${p2(Math.floor(f / 1500) % 60)}:${p2(Math.floor(f / 25) % 60)}:${p2(f % 25)}`; }
     syncFaces();
     requestAnimationFrame(tick);
   };
@@ -239,21 +259,10 @@
   stage.addEventListener('keydown', e => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFrom(cube.querySelector('.face[data-video]')); }
   });
-  $('#liveGrid').addEventListener('click', e => {
-    const b = e.target.closest('button.clip');
-    if (b) openFrom(b);
-  });
 
-  /* ---------- reveal on scroll + lazy, muted clip playback ---------- */
+  /* ---------- reveal on scroll ---------- */
   const io = new IntersectionObserver(entries => entries.forEach(en => {
-    const el = en.target;
-    if (el.matches('.reveal') && en.isIntersecting) el.classList.add('in');
-    const v = el.querySelector && el.querySelector('video[data-lazy]');
-    if (v) {
-      if (en.isIntersecting) {
-        v.muted = true; v.play().catch(() => {});
-      } else v.pause();
-    }
+    if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
   }), { threshold: .15 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 

@@ -36,7 +36,7 @@ svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="{x0} {y0} {x1-x0} {y1
 <path fill="#0b0103" d="{sil}"/>
 <path fill="#7d0a1c" d="{shadow}"/>
 <path fill="#efe8e0" d="{facep}"/>
-<path fill="#c8102e" fill-rule="evenodd" d="{stripes}"/>
+<path fill="#e3061b" fill-rule="evenodd" d="{stripes}"/>
 </svg>
 '''
 open(out, 'w').write(svg)

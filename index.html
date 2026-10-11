@@ -42,10 +42,23 @@
     <div class="hero-inner">
       <div class="logo-wrap"><img class="logo" src="assets/media/logo-ko.svg" alt="K.O" width="529" height="272" fetchpriority="high"></div>
 
-      <div class="cube-stage" id="cubeStage" role="button" tabindex="0" aria-label="Live clips. Drag to spin, tap a face to watch">
-        <div class="cube" id="cube"></div>
-        <div class="cube-floor" aria-hidden="true"></div>
+      <!-- the cube sits inside a camera-style screen: corner marks, REC, running timecode -->
+      <div class="screen" id="screen">
+        <div class="screen-fx" aria-hidden="true"></div>
+        <div class="cube-stage" id="cubeStage" role="button" tabindex="0" aria-label="Live clips. Drag to spin, tap a face to watch">
+          <div class="cube" id="cube"></div>
+          <div class="cube-floor" aria-hidden="true"></div>
+        </div>
+        <div class="hud" aria-hidden="true">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <span class="hud-tl"><b class="rec"></b>REC</span>
+          <span class="hud-tr">K.O / Live</span>
+          <span class="hud-bl" id="timecode">00:00:00:00</span>
+          <span class="hud-br">Cam 01</span>
+        </div>
       </div>
+
+      <a class="now" id="nowPlaying" target="_blank" rel="noopener"></a>
 
       <nav class="platforms" id="heroPlatforms" aria-label="Listen on"></nav>
     </div>
@@ -56,9 +69,8 @@
   <!-- STICKY NAV -->
   <nav class="chips" id="chips" aria-label="Sections">
     <a href="#out-now">Out Now</a>
-    <a href="#releases">Latest Releases</a>
-    <a href="#live">Live 2025</a>
-    <a href="#mixes">Videos & Mixes</a>
+    <a href="#releases">Releases</a>
+    <a href="#mixes">Mixes</a>
     <a href="#booking">Booking</a>
   </nav>
 
@@ -77,13 +89,8 @@
       <div class="grid" id="releaseGrid"></div>
     </section>
 
-    <section id="live" class="section">
-      <h2 class="section-head reveal">Live 2025</h2>
-      <div class="live" id="liveGrid"></div>
-    </section>
-
     <section id="mixes" class="section">
-      <h2 class="section-head reveal">Videos &amp; Mixes</h2>
+      <h2 class="section-head reveal">Mixes</h2>
       <div class="mixes" id="mixList"></div>
     </section>
 
