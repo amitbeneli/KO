@@ -1,0 +1,44 @@
+name: Publish site
+
+# Publishes the site to GitHub Pages on every push to master,
+# and after the daily release sync commits new releases.
+on:
+  push:
+    branches: [master]
+  workflow_run:
+    workflows: ["Sync releases"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Collect the public files
+        run: |
+          mkdir _site
+          cp -r index.html 404.html robots.txt sitemap.xml assets _site/
+          rm -f _site/assets/media/logo-ko-original.png
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

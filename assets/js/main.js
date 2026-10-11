@@ -18,7 +18,7 @@
   (AUTO.spotify || []).forEach(a => {
     const known = D.releases.find(r => norm(r.title) === norm(a.title));
     if (known) {
-      known.cover = known.cover || a.cover;
+      known.cover = a.cover || known.cover; // Spotify artwork beats the screenshot crops
       if (generic(known.url)) known.url = a.url;
     } else {
       added.push({ title: a.title, artists: a.artists, year: +a.date.slice(0, 4), cover: a.cover, url: a.url,
@@ -47,7 +47,7 @@
 
   /* ---------- releases ---------- */
   const cover = r => r.cover
-    ? `<img src="${r.cover}" alt="${esc(r.title)} cover" loading="lazy">`
+    ? `<img src="${r.cover}" alt="${esc(r.title)} cover" width="640" height="640" loading="lazy">`
     : `<div class="cover-ph"><small>${esc(r.artists)}</small><b>${esc(r.title)}</b></div>`;
 
   const featured = D.releases.filter(r => r.featured).slice(0, 4);
@@ -97,14 +97,14 @@
     const tag = c.video ? 'button' : 'a';
     return `<${tag} class="clip reveal${c.wide ? ' wide' : ''}" ${attrs} style="transition-delay:${i * 90}ms">
       ${media}
-      <span class="clip-badge ${c.video ? 'rec' : ''}">${c.video ? 'Live clip' : 'Full set'}</span>
+      <span class="clip-badge ${c.video ? 'rec' : ''}">${c.video ? 'Live clip' : 'YouTube'}</span>
       <div class="clip-info"><h3>${esc(c.title)}</h3><p>${esc(c.place)}</p></div>
     </${tag}>`;
   }).join('');
 
   $('#mixList').innerHTML = D.mixes.map(m => `
     <a class="mix reveal" href="${m.url}" ${ext}>
-      <img src="${m.image}" alt="" loading="lazy">
+      <img src="${m.image}" alt="" width="120" height="120" loading="lazy">
       <div><h3>${esc(m.title)}</h3><p>${esc(m.by)}</p></div>
       <span class="arrow">${ARROW}</span>
     </a>`).join('');
@@ -120,13 +120,17 @@
   cube.classList.add('exploded');
   cube.innerHTML = D.cube.map((f, i) => {
     let inner;
-    if (f.video) inner = `<video poster="${f.poster}" muted autoplay loop playsinline preload="auto">${sources(f.video)}</video><span class="tag">Live</span>`;
-    else if (f.logo) inner = `<img src="assets/media/logo-ko.svg" alt="">`;
-    else inner = `<img src="${f.image}" alt="">`;
-    const data = f.video ? `data-video="${f.video}" data-poster="${f.poster}"` : f.image ? `data-image="${f.image.replace('sq-', '')}"` : '';
+    if (f.video) inner = `<video poster="${f.poster}" muted loop playsinline preload="none">${sources(f.video)}</video>`;
+    else if (f.logo) inner = `<img src="assets/media/logo-ko.svg" alt="" width="529" height="272">`;
+    else inner = `<img src="${f.image}" alt="" width="640" height="640">`;
+    const data = f.video ? `data-video="${f.full || f.video}" data-poster="${f.poster}"` : f.image ? `data-image="${f.image.replace('sq-', '')}"` : '';
     return `<div class="face${f.logo ? ' face-logo' : ''}" style="--rot:${ROT[i]};transition-delay:${i * 90}ms" ${data}>${inner}</div>`;
   }).join('');
-  const faces = [...cube.children].map((f, i) => ({ v: f.querySelector('video'), rot: ROT[i] }));
+  const CORNER = 'rotateX(-35.264deg) rotateZ(45deg)'; // stand the cube on a corner: its body diagonal becomes vertical
+  const faces = [...cube.children].map((f, i) => ({
+    v: f.querySelector('video'),
+    n: new DOMMatrix(CORNER + ' ' + ROT[i]).transformPoint(new DOMPoint(0, 0, 1, 0)) // face normal before the spin
+  }));
   // turn each face's picture (in 90deg steps, so it still fills the face) to read upright on the tilted cube
   [...cube.children].forEach((f, i) => {
     const m = new DOMMatrix('rotateX(-35.264deg) rotateZ(45deg) ' + ROT[i]);
@@ -141,15 +145,18 @@
   });
   faces.forEach(f => f.v && (f.v.muted = true));
   // stand the cube on a corner: its body diagonal becomes the vertical axis
-  const CORNER = 'rotateX(-35.264deg) rotateZ(45deg)';
   // play only faces turned toward the viewer (at most three on a corner-standing cube)
-  const syncFaces = transform => faces.forEach(f => {
+  const syncFaces = () => {
+    const sy = Math.sin(ry * Math.PI / 180), cy = Math.cos(ry * Math.PI / 180);
+    const sx = Math.sin(rx * Math.PI / 180), cx = Math.cos(rx * Math.PI / 180);
+    faces.forEach(f => {
     if (!f.v) return;
-    const n = new DOMMatrix(transform + ' ' + f.rot).transformPoint(new DOMPoint(0, 0, 1, 0));
-    const facing = n.z > 0.05;
+    const z = f.n.y * sx + (-f.n.x * sy + f.n.z * cy) * cx; // z of rotateX(rx) rotateY(ry) applied to the normal
+    const facing = z > 0.05;
     if (facing && f.v.paused) f.v.play().catch(() => {});
     else if (!facing && !f.v.paused) f.v.pause();
-  });
+    });
+  };
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let rx = -6, ry = 30, vx = 0, vy = reduce ? 0 : 9; // intro whip, eases down to cruise speed
@@ -165,9 +172,8 @@
       vx += ((-6 + Math.sin(now / 2600) * 6 - rx) * .002 - vx * .06) * dt;
       ry += vy * dt; rx += vx * dt;
     }
-    const t = `rotateX(${rx}deg) rotateY(${ry}deg) ${CORNER}`;
-    cube.style.transform = t;
-    syncFaces(t);
+    cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) ${CORNER}`;
+    syncFaces();
     requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
@@ -202,10 +208,16 @@
       : `<img src="${image}" alt="">`;
     sound.hidden = !video;
     sound.textContent = 'Sound on';
+    lastFocus = document.activeElement;
     lb.hidden = false;
     document.body.style.overflow = 'hidden';
+    $('#lbClose').focus();
   }
-  const close = () => { lb.hidden = true; frame.innerHTML = ''; document.body.style.overflow = ''; };
+  let lastFocus = null;
+  const close = () => {
+    lb.hidden = true; frame.innerHTML = ''; document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  };
   sound.addEventListener('click', () => {
     const v = frame.querySelector('video');
     v.muted = !v.muted; v.play();
@@ -213,7 +225,20 @@
   });
   $('#lbClose').addEventListener('click', close);
   lb.addEventListener('click', e => { if (e.target === lb) close(); });
-  addEventListener('keydown', e => { if (e.key === 'Escape' && !lb.hidden) close(); });
+  addEventListener('keydown', e => {
+    if (lb.hidden) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'Tab') { // keep focus inside the viewer
+      const items = [...lb.querySelectorAll('button:not([hidden]), video')];
+      const i = items.indexOf(document.activeElement);
+      e.preventDefault();
+      items[(i + (e.shiftKey ? -1 : 1) + items.length) % items.length].focus();
+    }
+  });
+  // keyboard: Enter on the cube opens the first live clip
+  stage.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openFrom(cube.querySelector('.face[data-video]')); }
+  });
   $('#liveGrid').addEventListener('click', e => {
     const b = e.target.closest('button.clip');
     if (b) openFrom(b);
