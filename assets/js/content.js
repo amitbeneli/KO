@@ -39,8 +39,12 @@ window.KO = {
 
   // Clips with `video` play muted inline; `url` is used for full sets on YouTube.
   live: [
+    { title: 'Main Stage', place: 'Festival · Live 2025', video: 'assets/media/video/live-red-stage.mp4',
+      poster: 'assets/media/video/live-red-stage.jpg', wide: true },
     { title: 'Warehouse Night', place: 'Live 2025', video: 'assets/media/video/live-warehouse.mp4',
       poster: 'assets/media/video/live-warehouse.jpg' },
+    { title: 'Into the Smoke', place: 'Festival · Live 2025', video: 'assets/media/video/live-festival-crowd.mp4',
+      poster: 'assets/media/video/live-festival-crowd.jpg' },
     { title: 'Rooftop Sunset', place: 'Zorka · Live 2025', video: 'assets/media/video/live-rooftop.mp4',
       poster: 'assets/media/video/live-rooftop.jpg' },
     { title: 'Adloyada Festival', place: 'Purim · Kineret 2025', image: 'assets/media/photos/always-here.webp',
@@ -63,13 +67,13 @@ window.KO = {
     'assets/media/photos/always-here.webp'
   ],
 
-  // The 3D cube in the hero. Video faces autoplay muted.
+  // The 3D cube in the hero: faces 1-4 are the sides, 5 top, 6 bottom. Video faces autoplay muted.
   cube: [
+    { video: 'assets/media/video/live-red-stage.mp4', poster: 'assets/media/video/live-red-stage.jpg' },
     { video: 'assets/media/video/live-warehouse.mp4', poster: 'assets/media/video/live-warehouse.jpg' },
-    { image: 'assets/media/photos/sq-red-room.webp' },
+    { video: 'assets/media/video/live-festival-crowd.mp4', poster: 'assets/media/video/live-festival-crowd.jpg' },
     { video: 'assets/media/video/live-rooftop.mp4', poster: 'assets/media/video/live-rooftop.jpg' },
-    { image: 'assets/media/photos/sq-hands-up.webp' },
     { logo: true },
-    { image: 'assets/media/photos/sq-duo-blue.webp' }
+    { image: 'assets/media/photos/sq-hands-up.webp' }
   ]
 };

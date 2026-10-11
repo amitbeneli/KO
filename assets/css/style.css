@@ -271,13 +271,16 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
 
 /* live */
 .live { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-@media (min-width: 720px) { .live { grid-template-columns: repeat(3, 1fr); gap: 22px; } }
+@media (min-width: 720px) { .live { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
 .clip {
   position: relative; aspect-ratio: 9 / 14; overflow: hidden; border-radius: 6px; text-align: left;
   border: 1px solid var(--line); background: #000; transition: all .5s var(--ease);
 }
-.clip:first-child { grid-column: span 2; aspect-ratio: 16 / 11; }
-@media (min-width: 720px) { .clip:first-child { grid-column: auto; aspect-ratio: 9 / 14; } }
+/* landscape clip leads: full width on phones, a 2x2 block on desktop */
+.clip.wide { grid-column: span 2; aspect-ratio: 16 / 10; }
+@media (min-width: 720px) {
+  .clip.wide { grid-row: span 2; aspect-ratio: auto; }
+}
 .clip video, .clip img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease), filter .6s; filter: saturate(.85) brightness(.85); }
 .clip:hover { border-color: rgba(255, 31, 61, .7); box-shadow: var(--glow); }
 .clip:hover video, .clip:hover img { transform: scale(1.05); filter: none; }
@@ -325,8 +328,8 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
 /* lightbox */
 .lightbox { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px; background: rgba(0, 0, 0, .9); backdrop-filter: blur(14px); animation: fade-up .4s var(--ease); }
 .lightbox[hidden] { display: none; }
-.lb-frame { max-width: min(92vw, 520px); max-height: 82svh; border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255, 31, 61, .6), 0 0 60px rgba(255, 31, 61, .35); }
-.lb-frame video, .lb-frame img { max-height: 82svh; width: auto; }
+.lb-frame { max-width: min(92vw, 1000px); max-height: 82svh; border-radius: 8px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255, 31, 61, .6), 0 0 60px rgba(255, 31, 61, .35); }
+.lb-frame video, .lb-frame img { max-height: 82svh; max-width: min(92vw, 1000px); width: auto; }
 .lb-close { position: absolute; top: 14px; right: 16px; width: 46px; height: 46px; font-size: 30px; line-height: 1; opacity: .8; }
 .lb-sound { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); padding: 11px 22px; border-radius: 99px; border: 1px solid var(--red); font-size: 11px; letter-spacing: .26em; text-transform: uppercase; background: rgba(255, 31, 61, .15); box-shadow: var(--glow); }
 

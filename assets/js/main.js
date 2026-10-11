@@ -70,7 +70,7 @@
       : `<img src="${c.image}" alt="" loading="lazy">`;
     const attrs = c.video ? `type="button" data-video="${c.video}" data-poster="${c.poster}"` : `href="${c.url}" ${ext}`;
     const tag = c.video ? 'button' : 'a';
-    return `<${tag} class="clip reveal" ${attrs} style="transition-delay:${i * 90}ms">
+    return `<${tag} class="clip reveal${c.wide ? ' wide' : ''}" ${attrs} style="transition-delay:${i * 90}ms">
       ${media}
       <span class="clip-badge ${c.video ? 'rec' : ''}">${c.video ? 'Live clip' : 'Full set'}</span>
       <div class="clip-info"><h3>${esc(c.title)}</h3><p>${esc(c.place)}</p></div>
@@ -103,7 +103,15 @@
     const data = f.video ? `data-video="${f.video}" data-poster="${f.poster}"` : f.image ? `data-image="${f.image.replace('sq-', '')}"` : '';
     return `<div class="face${f.logo ? ' face-logo' : ''}" style="--rot:${ROT[i]};transition-delay:${i * 90}ms" ${data}>${inner}</div>`;
   }).join('');
-  cube.querySelectorAll('video').forEach(v => { v.muted = true; v.play().catch(() => {}); });
+  const faceVideos = [...cube.children].slice(0, 4).map(f => f.querySelector('video'));
+  faceVideos.forEach(v => v && (v.muted = true));
+  // play only the side faces turned toward the viewer, so phones decode at most two clips
+  const syncFaces = () => faceVideos.forEach((v, i) => {
+    if (!v) return;
+    const facing = Math.cos((ry + i * 90) * Math.PI / 180) > -0.15;
+    if (facing && v.paused) v.play().catch(() => {});
+    else if (!facing && !v.paused) v.pause();
+  });
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let rx = -18, ry = 30, vx = 0, vy = reduce ? 0 : 9; // intro whip, eases down to cruise speed
@@ -120,6 +128,7 @@
       ry += vy * dt; rx += vx * dt;
     }
     cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+    syncFaces();
     requestAnimationFrame(tick);
   };
   requestAnimationFrame(tick);
