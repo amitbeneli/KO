@@ -6,7 +6,6 @@
  */
 window.KO = {
   artist: 'K.O',
-  tagline: ['DJ', 'Producer', 'Israel'],
   bio: 'Late-night house and groove from Israel — built for warehouses, rooftops and the last hour of the night.',
   email: 'K.O@sako-mgmt.com',
 
@@ -54,17 +53,6 @@ window.KO = {
   mixes: [
     { title: 'Maccabi Podcast', by: 'By K.O', image: 'assets/media/covers/maccabi-podcast.webp',
       url: 'https://on.soundcloud.com/sedm5H5yJz75iUqP8' } // TODO: episode URL
-  ],
-
-  gallery: [
-    'assets/media/photos/red-room.webp',
-    'assets/media/photos/hands-up.webp',
-    'assets/media/photos/duo-blue.webp',
-    'assets/media/photos/laser-hall.webp',
-    'assets/media/photos/rooftop.webp',
-    'assets/media/photos/crowd-blue.webp',
-    'assets/media/photos/duo-crowd.webp',
-    'assets/media/photos/always-here.webp'
   ],
 
   // The 3D cube in the hero: faces 1-4 are the sides, 5 top, 6 bottom. Video faces autoplay muted.
