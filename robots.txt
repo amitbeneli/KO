@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://amitbeneli.github.io/KO/sitemap.xml
+Sitemap: https://ko.sako-mgmt.com/sitemap.xml
