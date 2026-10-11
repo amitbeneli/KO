@@ -26,10 +26,10 @@ def trace(mask, blur=1.4, turd=40):
             else: d.append(f'C{seg.c1.x/K:.1f} {seg.c1.y/K:.1f} {seg.c2.x/K:.1f} {seg.c2.y/K:.1f} {seg.end_point.x/K:.1f} {seg.end_point.y/K:.1f}')
         d.append('Z')
     return ''.join(d)
-sil = trace(fg, 1.0, 20)
-shadow = trace(pink | dark & ~face, 1.0, 30)
-facep = trace(face, 1.2, 20)
-stripes = trace(stripe, 1.0, 6)
+sil = trace(fg, 1.4, 30)
+shadow = trace(pink | dark & ~face, 1.4, 40)
+facep = trace(face, 1.4, 30)
+stripes = trace(stripe, 2.8, 70)
 # crop viewBox to silhouette bounds
 ys, xs = np.where(fg); x0, y0, x1, y1 = xs.min() - 2, ys.min() - 2, xs.max() + 3, ys.max() + 3
 svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="{x0} {y0} {x1-x0} {y1-y0}" role="img" aria-label="K.O">
