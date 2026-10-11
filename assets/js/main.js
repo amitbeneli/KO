@@ -31,7 +31,7 @@
     if (D.releases.some(r => norm(r.title) === norm(t.title))) return;
     const mix = D.mixes.find(m => norm(t.title).includes(norm(m.title)) && generic(m.url));
     if (mix) { mix.url = t.url; mix.image = mix.image || t.cover; }
-    else if (scNew.length < 6) scNew.push({ title: t.title, by: 'SoundCloud / ' + t.date.slice(0, 4), image: t.cover || 'assets/media/logo-ko.png', url: t.url });
+    else if (scNew.length < 6) scNew.push({ title: t.title, by: 'SoundCloud / ' + t.date.slice(0, 4), image: t.cover || 'assets/media/logo-ko.svg', url: t.url });
   });
   D.mixes = scNew.concat(D.mixes);
 
@@ -74,6 +74,11 @@
       const dir = e.target.closest('button') === nav.firstChild ? -1 : 1;
       track.scrollBy({ left: dir * track.firstElementChild.offsetWidth, behavior: 'smooth' });
     });
+    const ends = () => {
+      nav.firstChild.disabled = track.scrollLeft < 8;
+      nav.lastChild.disabled = track.scrollLeft + track.clientWidth > track.scrollWidth - 8;
+    };
+    track.addEventListener('scroll', ends, { passive: true }); ends();
   }
 
   $('#releaseGrid').innerHTML = D.releases.filter(r => r.latest || !r.featured).slice(0, 8).map((r, i) => `
@@ -116,12 +121,24 @@
   cube.innerHTML = D.cube.map((f, i) => {
     let inner;
     if (f.video) inner = `<video poster="${f.poster}" muted autoplay loop playsinline preload="auto">${sources(f.video)}</video><span class="tag">Live</span>`;
-    else if (f.logo) inner = `<img src="assets/media/logo-ko.png" alt="">`;
+    else if (f.logo) inner = `<img src="assets/media/logo-ko.svg" alt="">`;
     else inner = `<img src="${f.image}" alt="">`;
     const data = f.video ? `data-video="${f.video}" data-poster="${f.poster}"` : f.image ? `data-image="${f.image.replace('sq-', '')}"` : '';
     return `<div class="face${f.logo ? ' face-logo' : ''}" style="--rot:${ROT[i]};transition-delay:${i * 90}ms" ${data}>${inner}</div>`;
   }).join('');
   const faces = [...cube.children].map((f, i) => ({ v: f.querySelector('video'), rot: ROT[i] }));
+  // turn each face's picture (in 90deg steps, so it still fills the face) to read upright on the tilted cube
+  [...cube.children].forEach((f, i) => {
+    const m = new DOMMatrix('rotateX(-35.264deg) rotateZ(45deg) ' + ROT[i]);
+    const ux = m.transformPoint(new DOMPoint(1, 0, 0, 0)).y, uy = m.transformPoint(new DOMPoint(0, 1, 0, 0)).y;
+    let best = 0, bestY = Infinity;
+    for (const deg of [0, 90, 180, 270]) {
+      const r = deg * Math.PI / 180, upY = Math.sin(r) * ux - Math.cos(r) * uy; // screen y of the picture's top
+      if (upY < bestY - 1e-6) { bestY = upY; best = deg; }
+    }
+    const media = f.querySelector('video, img');
+    if (media && best) media.style.transform = `rotate(${best}deg)`;
+  });
   faces.forEach(f => f.v && (f.v.muted = true));
   // stand the cube on a corner: its body diagonal becomes the vertical axis
   const CORNER = 'rotateX(-35.264deg) rotateZ(45deg)';
