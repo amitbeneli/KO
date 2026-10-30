@@ -1,7 +1,16 @@
 /* Generated daily by scripts/sync-releases.mjs. Do not edit; put manual content in content.js. */
 window.KO_AUTO = {
- "updated": "2026-10-11",
+ "updated": "2026-10-30",
  "releases": [
+  {
+   "title": "24H",
+   "artists": "K.O",
+   "date": "2026-10-30",
+   "cover": "https://cdn-images.dzcdn.net/images/cover/08d31338e235b761351713eb1772835a/1000x1000-000000-80-0-0.jpg",
+   "links": {
+    "deezer": "https://www.deezer.com/album/1110017112"
+   }
+  },
   {
    "title": "Lights Out",
    "artists": "K.O",
