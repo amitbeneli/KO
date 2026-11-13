@@ -3,7 +3,7 @@
    ============================================================ */
 const CONFIG = {
   // TODO: real booking address. The form opens the visitor's mail app addressed to this.
-  bookingEmail: "booking@example.com",
+  bookingEmail: "K.O@sako-mgmt.com",
   // TODO: real Instagram profile links
   instagram: {
     connection: "",
