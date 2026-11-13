@@ -73,7 +73,7 @@
     .add(() => { done(); $("#loader").style.display = "none"; })
     .fromTo("#heroFrame", { scale: 1.12 }, { scale: 1, duration: 1.6, ease: "expo.out" }, 0.2)
     .fromTo(".hero-title .line > span", { y: 0, yPercent: 110 }, { y: 0, yPercent: 0, duration: 1.2, ease: "expo.out", stagger: 0.09 }, 0.35)
-    .fromTo([".hero-tag", ".hero-foot", ".hero-meta"], { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "expo.out", stagger: 0.08 }, 0.7);
+    .fromTo([".hero-tag", ".hero-foot"], { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "expo.out", stagger: 0.08 }, 0.7);
 
   /* ---------- hero: frame shrinks into a card, text drifts up ---------- */
   gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } })

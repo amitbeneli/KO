@@ -24,7 +24,7 @@
 
 /* hero waits for the loader */
 .motion-pending .hero-title .line > span { animation: none; transform: translateY(110%); }
-.motion-pending .hero-tag, .motion-pending .hero-foot, .motion-pending .hero-meta { opacity: 0; }
+.motion-pending .hero-tag, .motion-pending .hero-foot { opacity: 0; }
 
 /* ---------- ambient light: soft brand-coloured glow, follows --glow ---------- */
 .ambient {
