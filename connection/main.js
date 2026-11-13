@@ -26,12 +26,33 @@ const ARTISTS = [
   "Freedom Fighters", "Itayga", "Astral Projection", "Dor Danino", "Bonafique",
 ];
 
+// Vertical clips in the Moments section (files in media/reels/)
+const REELS = [
+  { file: "bonafique-jenia-tarsol", artist: "Bonafique b2b Jenia Tarsol", label: "Make Sense / Daylight" },
+  { file: "adam-ten", artist: "Adam Ten", label: "Make Sense / Golden hour" },
+  { file: "ko-broken-hill", artist: "K.O b2b Broken Hill", label: "Make Sense / After dark" },
+  { file: "darco-yamagucci", artist: "Darco b2b Yamagucci", label: "Make Sense / Peak time" },
+  { file: "itayga-dor-danino", artist: "Itayga b2b Dor Danino", label: "Make Sense / Night" },
+  { file: "sean-doron", artist: "Sean Doron", label: "Connection" },
+];
+
 /* ============================================================ */
 
 document.documentElement.classList.add("js");
 
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// hero video: vertical cut on phones, wide cut on desktop; poster only with reduced motion
+const heroVideo = $("#heroVideo");
+if (heroVideo && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const mobile = window.matchMedia("(max-width: 640px)").matches;
+  if (mobile) heroVideo.poster = "media/hero-mobile-poster.jpg";
+  heroVideo.src = mobile ? heroVideo.dataset.mobile : heroVideo.dataset.desktop;
+  heroVideo.play().catch(() => {});
+} else if (heroVideo && window.matchMedia("(max-width: 640px)").matches) {
+  heroVideo.poster = "media/hero-mobile-poster.jpg";
+}
 
 // lists
 $("#msLineup").innerHTML = MAKE_SENSE_LINEUP.map((a) => `<li>${esc(a)}</li>`).join("");
@@ -112,3 +133,45 @@ form.addEventListener("submit", (ev) => {
   window.location.href = `mailto:${CONFIG.bookingEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   note.textContent = "Opening your email app…";
 });
+
+// moments: vertical clips. Muted autoplay while on screen; tap toggles sound (one at a time).
+const reelsEl = $("#reels");
+if (!REELS.length) $("#moments").hidden = true;
+reelsEl.innerHTML = REELS.map((r) => `
+  <div class="reel" role="button" tabindex="0" aria-label="${esc(r.artist)} clip. Tap for sound">
+    <video muted loop playsinline preload="none" poster="media/reels/${r.file}.jpg">
+      <source src="media/reels/${r.file}.mp4" type="video/mp4">
+    </video>
+    <span class="reel-sound">Sound off</span>
+    <p class="reel-cap"><small>${esc(r.label)}</small>${esc(r.artist)}</p>
+  </div>`).join("");
+const reelEls = [...reelsEl.querySelectorAll(".reel")];
+const setSound = (el, on) => {
+  const v = el.querySelector("video");
+  v.muted = !on; el.classList.toggle("unmuted", on);
+  el.querySelector(".reel-sound").textContent = on ? "Sound on" : "Sound off";
+};
+reelEls.forEach((el) => {
+  const toggle = () => {
+    const on = !el.classList.contains("unmuted");
+    reelEls.forEach((o) => o !== el && setSound(o, false));
+    setSound(el, on);
+    el.querySelector("video").play().catch(() => {});
+  };
+  el.addEventListener("click", toggle);
+  el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+});
+const vio = new IntersectionObserver((entries) => {
+  entries.forEach((e) => {
+    const v = e.target.querySelector("video");
+    if (e.isIntersecting && !reduced) v.play().catch(() => {});
+    else { v.pause(); setSound(e.target, false); }
+  });
+}, { threshold: 0.35 });
+reelEls.forEach((el) => vio.observe(el));
+
+// gallery arrows
+const film = $("#film");
+document.querySelectorAll(".film-btn").forEach((b) => b.addEventListener("click", () => {
+  film.scrollBy({ left: +b.dataset.dir * film.clientWidth * 0.7, behavior: reduced ? "auto" : "smooth" });
+}));
