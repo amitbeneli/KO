@@ -8,7 +8,7 @@ const CONFIG = {
   instagram: {
     connection: "https://www.instagram.com/connection__community/",
     makesense: "https://www.instagram.com/wearemakesense/",
-    euforia: "",
+    euforia: "https://www.instagram.com/euforia_offical/",
   },
 };
 
