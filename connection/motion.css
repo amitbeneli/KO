@@ -253,3 +253,33 @@ p { color: rgba(247, 239, 225, .66); }
 .spec-mail { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
 .spec-mail:hover { color: var(--cream); }
 @media (max-width: 640px) { .spec div { grid-template-columns: 1fr; gap: 6px; } }
+
+/* ============================================================
+   Editorial fact lines: thin large figures, hairline dividers
+   ============================================================ */
+.factline { display: flex; flex-wrap: nowrap; gap: 0; margin: 0 0 36px; padding: 0; border: 0; }
+.factline div { flex: 1 1 0; min-width: 0; padding: 4px clamp(14px, 2vw, 28px) 6px; border-left: 1px solid var(--line); }
+.factline div:first-child { padding-left: 0; border-left: 0; }
+.factline dt { order: 2; margin: 12px 0 0; font: 500 10px/1.2 var(--display); letter-spacing: .28em; color: var(--cream-dim); }
+.factline dd { font: 400 clamp(30px, 3.3vw, 52px)/.95 var(--display); letter-spacing: -.01em; color: var(--cream); white-space: nowrap; }
+.factline div { display: flex; flex-direction: column; }
+.factline dd { order: 1; }
+.factline-violet dd { color: var(--violet-2); }
+.factline-gold dd { color: var(--accent-2); }
+.euforia-facts { margin-top: clamp(28px, 3vw, 44px); padding-top: 28px; border-top: 1px solid var(--line); }
+@media (max-width: 640px) {
+  .factline { flex-wrap: wrap; row-gap: 22px; }
+  .factline div { flex: 1 1 45%; }
+  .factline div:nth-child(odd) { padding-left: 0; border-left: 0; }
+  .factline dd { font-size: 34px; }
+}
+
+/* ledger: one fact per row, label left, figure right, hairlines between */
+.factline { display: block; margin: 0 0 36px; border-top: 1px solid var(--line); }
+.factline div { display: flex; flex-direction: row; align-items: baseline; justify-content: space-between; gap: 24px;
+  padding: 14px 0; border-left: 0; border-bottom: 1px solid var(--line); }
+.factline div:first-child, .factline div:nth-child(odd) { padding-left: 0; }
+.factline dt { order: 1; margin: 0; font: 500 10px/1 var(--display); letter-spacing: .28em; color: var(--cream-dim); }
+.factline dd { order: 2; font: 300 clamp(22px, 2vw, 30px)/1 var(--display); letter-spacing: .02em; white-space: nowrap; text-align: right; }
+.euforia-facts { max-width: 560px; padding-top: 0; }
+@media (max-width: 640px) { .factline div { flex: none; } .factline dd { font-size: 24px; } }
