@@ -228,3 +228,28 @@ p { color: rgba(247, 239, 225, .66); }
 .euforia-facts dt { font: 600 11px/1 var(--display); letter-spacing: .22em; text-transform: uppercase; color: var(--cream-dim); margin-bottom: 10px; }
 .euforia-facts dd { margin: 0; font: 700 clamp(26px, 2.6vw, 38px)/1 var(--display); text-transform: uppercase; color: var(--accent-2); }
 @media (max-width: 1000px) { .euforia .big { margin-top: 14px; } }
+
+/* ============================================================
+   Quieter labels, compact fact lines, booking spec
+   ============================================================ */
+.tag, .tag-ember, .tag-violet {
+  border: 0; border-radius: 0; padding: 0; background: none;
+  font: 600 11px/1 var(--display); letter-spacing: .26em; color: var(--cream-dim);
+}
+.tag-ember { color: var(--accent); }
+.tag-violet { color: var(--violet-2); }
+
+.factline { display: flex; flex-wrap: wrap; gap: 18px clamp(28px, 4vw, 64px); margin: 0 0 32px; padding: 20px 0; border-block: 1px solid var(--line); }
+.factline dt { font: 600 11px/1 var(--display); letter-spacing: .22em; text-transform: uppercase; color: var(--cream-dim); margin-bottom: 10px; }
+.factline dd { margin: 0; font: 700 clamp(24px, 2.4vw, 34px)/1 var(--display); text-transform: uppercase; color: var(--cream); }
+.factline-violet dd { color: var(--violet-2); }
+.factline-gold dd { color: var(--accent-2); }
+.euforia-facts { border-bottom: 0; padding-bottom: 0; }
+
+.spec { margin: 28px 0 0; border-top: 1px solid var(--line); }
+.spec div { display: grid; grid-template-columns: 120px 1fr; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.spec dt { font: 600 11px/1.6 var(--display); letter-spacing: .22em; text-transform: uppercase; color: var(--cream-dim); }
+.spec dd { margin: 0; font-size: 15px; line-height: 1.5; color: var(--cream); }
+.spec-mail { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
+.spec-mail:hover { color: var(--cream); }
+@media (max-width: 640px) { .spec div { grid-template-columns: 1fr; gap: 6px; } }

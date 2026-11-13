@@ -122,15 +122,13 @@ form.addEventListener("submit", (ev) => {
     f.setAttribute("aria-invalid", bad);
     if (bad) ok = false;
   });
-  if (!ok) { note.textContent = "Please fill in your name, artist / agency and a valid email."; return; }
+  if (!ok) { note.textContent = "Please add your name and a valid email."; return; }
 
   const d = Object.fromEntries(new FormData(form));
-  const subject = `Booking / Collaboration — ${d.artist}`;
+  const subject = `Booking / Collaboration — ${d.name}`;
   const body = [
-    `Name: ${d.name}`,
-    `Artist / Agency: ${d.artist}`,
+    `From: ${d.name}`,
     `Email: ${d.email}`,
-    `I am: ${d.role}`,
     "",
     d.message,
   ].join("\n");

@@ -15,7 +15,6 @@
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const desktop = matchMedia("(min-width: 1001px)").matches;
-  const finePointer = matchMedia("(pointer: fine)").matches;
 
   /* ---------- smooth scroll ---------- */
   let lenis = null;
@@ -68,26 +67,18 @@
     });
   });
 
-  /* ---------- intro loader -> hero ---------- */
-  const count = $("#loaderCount");
-  const counter = { v: 0 };
-  const intro = gsap.timeline({ defaults: { ease: "expo.inOut" } });
-  intro
-    .to(counter, { v: 100, duration: 0.9, ease: "power2.inOut", onUpdate: () => { count.textContent = String(Math.round(counter.v)).padStart(3, "0"); } })
-    .to(".loader-inner", { yPercent: -40, opacity: 0, duration: 0.6, ease: "power3.in" }, "+=0.1")
-    .to(".loader-panel", { scaleY: 0, duration: 1 }, "-=0.25")
+  /* ---------- intro: a short curtain lifts onto the hero ---------- */
+  gsap.timeline()
+    .to(".loader-panel", { yPercent: -100, duration: 0.75, ease: "expo.inOut", delay: 0.1 })
     .add(() => { done(); $("#loader").style.display = "none"; })
-    .fromTo("#heroFrame", { scale: 1.15 }, { scale: 1, duration: 1.8, ease: "expo.out" }, "-=0.9")
-    .fromTo(".hero-title .line > span", { y: 0, yPercent: 110 }, { y: 0, yPercent: 0, duration: 1.2, ease: "expo.out", stagger: 0.09 }, "-=1.5")
-    .fromTo([".hero-tag", ".hero-foot", ".hero-meta"], { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "expo.out", stagger: 0.08 }, "-=1.0");
+    .fromTo("#heroFrame", { scale: 1.12 }, { scale: 1, duration: 1.6, ease: "expo.out" }, 0.2)
+    .fromTo(".hero-title .line > span", { y: 0, yPercent: 110 }, { y: 0, yPercent: 0, duration: 1.2, ease: "expo.out", stagger: 0.09 }, 0.35)
+    .fromTo([".hero-tag", ".hero-foot", ".hero-meta"], { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "expo.out", stagger: 0.08 }, 0.7);
 
   /* ---------- hero: frame shrinks into a card, text drifts up ---------- */
   gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } })
     .to("#heroFrame", { scale: 0.88, borderRadius: 24, ease: "none" }, 0)
     .to("#heroInner", { yPercent: -18, opacity: 0.2, ease: "none" }, 0);
-
-  /* ---------- progress bar ---------- */
-  gsap.to("#progress", { scaleX: 1, ease: "none", scrollTrigger: { start: 0, end: "max", scrub: 0.3 } });
 
   /* ---------- marquee reacts to scroll speed and direction ---------- */
   const track = $("#marquee");
@@ -231,41 +222,9 @@
   ScrollTrigger.create({ trigger: "#artistWall", start: "top 75%", end: "bottom 45%", scrub: true,
     onUpdate: (s) => { const n = Math.round(s.progress * names.length); names.forEach((li, i) => li.classList.toggle("lit", i < n)); } });
 
-  /* ---------- stats pop ---------- */
-  gsap.from(".stat-n", { yPercent: 60, opacity: 0, duration: 1.1, ease: "expo.out", stagger: 0.1,
-    scrollTrigger: { trigger: ".stats", start: "top 85%" } });
-
   /* ---------- footer giant word ---------- */
   gsap.fromTo(".footer-giant span", { yPercent: 60 }, { yPercent: 0, ease: "none",
     scrollTrigger: { trigger: ".footer", start: "top bottom", end: "bottom bottom", scrub: true } });
-
-  /* ---------- custom cursor + magnetic buttons (mouse only) ---------- */
-  if (finePointer) {
-    root.classList.add("has-cursor");
-    const cur = $("#cursor"), label = $("#cursorLabel");
-    const xTo = gsap.quickTo(cur, "x", { duration: 0.35, ease: "power3" });
-    const yTo = gsap.quickTo(cur, "y", { duration: 0.35, ease: "power3" });
-    addEventListener("pointermove", (e) => { xTo(e.clientX); yTo(e.clientY); });
-    const setState = (cls, text = "") => { cur.className = "cursor" + (cls ? " " + cls : ""); label.textContent = text; };
-    document.addEventListener("pointerover", (e) => {
-      const t = e.target;
-      if (t.closest(".reel")) setState("is-label", t.closest(".reel").classList.contains("unmuted") ? "Mute" : "Sound");
-      else if (t.closest(".film") && desktop) setState("is-label", "Scroll");
-      else if (t.closest("a, button, input, select, textarea, label")) setState("is-link");
-      else setState("");
-    });
-    document.addEventListener("click", (e) => { const r = e.target.closest(".reel"); if (r) label.textContent = r.classList.contains("unmuted") ? "Mute" : "Sound"; });
-
-    $$(".magnetic").forEach((btn) => {
-      const bx = gsap.quickTo(btn, "x", { duration: 0.5, ease: "elastic.out(1, 0.4)" });
-      const by = gsap.quickTo(btn, "y", { duration: 0.5, ease: "elastic.out(1, 0.4)" });
-      btn.addEventListener("pointermove", (e) => {
-        const r = btn.getBoundingClientRect();
-        bx((e.clientX - r.left - r.width / 2) * 0.3); by((e.clientY - r.top - r.height / 2) * 0.4);
-      });
-      btn.addEventListener("pointerleave", () => { bx(0); by(0); });
-    });
-  }
 
   // images that load late change layout: refresh trigger positions once everything is in
   addEventListener("load", () => ScrollTrigger.refresh());
