@@ -147,3 +147,69 @@
 @media (prefers-reduced-motion: reduce) {
   .loader, .cursor, .progress { display: none !important; }
 }
+
+/* ============================================================
+   Refined layer: quieter accents, tighter rhythm
+   ============================================================ */
+body { font-weight: 300; }
+p { color: rgba(247, 239, 225, .66); }
+.big { font-weight: 400; letter-spacing: -.005em; }
+.grain { opacity: .045; }
+
+.tag, .tag-ember, .tag-violet {
+  background: transparent; color: var(--cream-dim); border: 1px solid var(--line);
+  font: 600 11px/1 var(--display); letter-spacing: .24em; padding: 9px 16px; border-radius: 999px; margin-bottom: 22px;
+}
+.tag-ember { color: var(--ember); border-color: rgba(255, 106, 43, .45); }
+.tag-violet { color: var(--violet-2); border-color: rgba(176, 107, 255, .5); }
+
+.h-xxl em { color: transparent; -webkit-text-stroke: 1.5px var(--cream); }
+.btn { font-size: 13px; letter-spacing: .16em; padding: 16px 26px; }
+.btn-sm { padding: 11px 18px; font-size: 11px; }
+.nav-links a { font-size: 12px; letter-spacing: .18em; }
+.brandline { letter-spacing: .1em; font-size: 13px; }
+.facts dd { font-weight: 700; }
+.facts dt, .stat-l, .lineup-label { letter-spacing: .22em; font-size: 11px; }
+.marquee { padding: 16px 0; }
+.marquee-track span { font-size: clamp(22px, 2.8vw, 38px); padding: 0 22px; }
+.marquee-track b { font-size: 14px; }
+@media (pointer: fine) { .has-cursor .cursor.is-label { background: var(--cream); } }
+
+/* spacing */
+.section { padding: clamp(64px, 8vw, 120px) 0; }
+.ms { padding-top: clamp(80px, 10vw, 150px); }
+.ms-body { margin-top: clamp(40px, 5vw, 72px); }
+.ms-where { margin-top: 20px; }
+.booth { min-height: 88svh; }
+.booth-inner { padding-bottom: clamp(48px, 6vw, 96px); }
+.booth-inner .big { margin-top: 20px; }
+.gallery { padding: clamp(64px, 8vw, 110px) 0 clamp(40px, 5vw, 72px); }
+.gallery-head { margin-bottom: clamp(28px, 3vw, 44px); }
+.is-pinned-gallery .gallery-head { margin-bottom: 28px; }
+.conn-body { margin-top: clamp(32px, 4vw, 64px); }
+.conn-grid { margin-top: clamp(40px, 5vw, 72px); grid-auto-rows: clamp(60px, 7vw, 104px); }
+.cg-a { grid-column: 1 / 8; grid-row: 1 / 6; }
+.cg-b { grid-column: 8 / 13; grid-row: 1 / 3; }
+.cg-c { grid-column: 8 / 13; grid-row: 3 / 6; }
+.euforia { padding: clamp(56px, 7vw, 100px) 0; }
+.moments-head { margin-bottom: clamp(28px, 3vw, 44px); }
+.stats { margin-top: clamp(36px, 4vw, 56px); }
+.record-intro { padding-top: 0; }
+.next-lede { margin-top: 24px; }
+.venue { margin-top: clamp(36px, 4vw, 56px); }
+.venue-main { min-height: 440px; }
+.portraits { margin-top: clamp(28px, 3vw, 44px); }
+.artist-wall { margin-top: clamp(28px, 3vw, 44px); padding-top: 24px; }
+.h-xl + .big { margin-top: 20px; }
+.footer-giant { padding: 8px 0 24px; }
+@media (max-width: 1000px) {
+  .cg-a, .cg-b, .cg-c { grid-column: auto; grid-row: auto; }
+  .cg-a { grid-column: 1 / -1; }
+  .venue-main { min-height: 320px; }
+}
+
+@media (max-width: 640px) {
+  .conn-title { font-size: clamp(48px, 14.5vw, 250px); }
+  .nav .brandline { font-size: 10px; letter-spacing: .06em; gap: 5px; flex-wrap: nowrap; white-space: nowrap; }
+  .euforia-title { font-size: clamp(48px, 15vw, 170px); }
+}

@@ -50,7 +50,12 @@
         });
         el.replaceChild(frag, n);
       } else if (n.nodeType === 1 && n.tagName !== "BR") {
-        if (n.classList.contains("dot")) { el.replaceChild(wrap(n.cloneNode(true)), n); return; }
+        if (n.classList.contains("dot")) {
+          // keep the dot glued to the word before it so it never wraps alone
+          const prev = n.previousSibling;
+          if (prev && prev.nodeType === 1 && prev.classList.contains("split-w")) { prev.firstChild.appendChild(n); return; }
+          el.replaceChild(wrap(n.cloneNode(true)), n); return;
+        }
         if (n.children.length || n.tagName === "SPAN" || n.tagName === "EM") { split(n); }
       }
     });
@@ -68,7 +73,7 @@
   const counter = { v: 0 };
   const intro = gsap.timeline({ defaults: { ease: "expo.inOut" } });
   intro
-    .to(counter, { v: 100, duration: 1.1, ease: "power2.inOut", onUpdate: () => { count.textContent = String(Math.round(counter.v)).padStart(3, "0"); } })
+    .to(counter, { v: 100, duration: 0.9, ease: "power2.inOut", onUpdate: () => { count.textContent = String(Math.round(counter.v)).padStart(3, "0"); } })
     .to(".loader-inner", { yPercent: -40, opacity: 0, duration: 0.6, ease: "power3.in" }, "+=0.1")
     .to(".loader-panel", { scaleY: 0, duration: 1 }, "-=0.25")
     .add(() => { done(); $("#loader").style.display = "none"; })
