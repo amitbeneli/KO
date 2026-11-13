@@ -27,7 +27,7 @@
     // in-page links go through Lenis so they glide too
     $$('a[href^="#"]').forEach((a) => a.addEventListener("click", (e) => {
       const id = a.getAttribute("href");
-      const target = id.length > 1 && $(id);
+      const target = id.length > 1 && document.getElementById(id.slice(1));
       if (!target) return;
       e.preventDefault();
       lenis.scrollTo(target, { offset: id === "#top" ? 0 : -60, duration: 1.6 });
