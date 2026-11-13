@@ -147,6 +147,29 @@
       if (s.isActive) { if (!cv.src) cv.src = cv.dataset.src; cv.play().catch(() => {}); } else cv.pause();
     } });
 
+  /* ---------- ambient colour: the room's light shifts per brand ----------
+     Ember through Make Sense, violet through Connection, gold through
+     Euforia, then back to the ember house style. Each change is scrubbed
+     across a section boundary so there is never a hard switch. Created
+     after the gallery pin so the positions include its spacing. */
+  const palette = {
+    ember:  { "--accent": "#ff6a2b", "--accent-2": "#ffb36b", "--glow": "rgba(255, 106, 43, .07)",  "--bg": "#0b0907" },
+    violet: { "--accent": "#b06bff", "--accent-2": "#e2c6ff", "--glow": "rgba(150, 90, 255, .085)", "--bg": "#0d0710" },
+    gold:   { "--accent": "#e9b45c", "--accent-2": "#f6d49a", "--glow": "rgba(233, 180, 92, .075)", "--bg": "#0d0a06" },
+  };
+  const ambient = document.createElement("div");
+  ambient.className = "ambient"; ambient.setAttribute("aria-hidden", "true");
+  document.body.appendChild(ambient);
+  [
+    ["#connection", "top 70%", "top 20%", palette.ember, palette.violet],
+    ["#euforia", "top 70%", "top 30%", palette.violet, palette.gold],
+    ["#moments", "top 65%", "top 15%", palette.gold, palette.ember],
+  ].forEach(([trigger, start, end, from, to]) => {
+    if (!$(trigger)) return;
+    gsap.fromTo(root, { ...from }, { ...to, ease: "none", immediateRender: false,
+      scrollTrigger: { trigger, start, end, scrub: 0.8 } });
+  });
+
   /* ---------- reels rise in with a slight tilt ---------- */
   ScrollTrigger.batch(".reel", { start: "top 90%", once: true,
     onEnter: (els) => gsap.from(els, { y: 120, rotate: (i) => (i % 2 ? 3 : -3), opacity: 0, duration: 1.2, ease: "expo.out", stagger: 0.08 }) });
