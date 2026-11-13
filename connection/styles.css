@@ -191,7 +191,7 @@ p { color: var(--cream-dim); margin: 0 0 1.1em; }
 .ms-shade { position: absolute; inset: 0; background: linear-gradient(180deg, var(--bg) 0%, rgba(11,9,7,.35) 25%, rgba(11,9,7,.55) 55%, var(--bg) 92%); }
 .ms-inner { position: relative; }
 .ms-title { font-size: clamp(88px, 21vw, 340px); line-height: .82; display: flex; flex-direction: column; }
-.ms-title span:last-child { padding-left: .5em; }
+.ms-title > span:last-child { padding-left: .5em; }
 .ms-where { font: 600 clamp(15px, 1.4vw, 19px)/1.4 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--cream); margin: 28px 0 0; }
 .ms-body { margin-top: clamp(72px, 10vw, 140px); }
 .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin: 0 0 40px; }

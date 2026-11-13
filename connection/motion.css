@@ -1,0 +1,149 @@
+/* ============================================================
+   Motion layer + new sections (Connection, Euforia, loader,
+   cursor, progress). Everything here degrades to a static page
+   when JS or GSAP is missing or the visitor prefers less motion.
+   ============================================================ */
+:root { --violet: #b06bff; --violet-2: #e2c6ff; }
+
+/* ---------- loader ---------- */
+.loader { display: none; }
+.motion-pending .loader {
+  display: flex; position: fixed; inset: 0; z-index: 200;
+  align-items: flex-end; justify-content: space-between;
+  padding: var(--gutter); pointer-events: none;
+}
+.loader-panel { position: absolute; inset: 0; background: var(--bg); transform-origin: top; }
+.loader-inner { position: relative; width: 100%; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+.loader-brands { display: flex; gap: 10px; flex-wrap: wrap; margin: 0; font: 700 clamp(14px, 1.4vw, 18px)/1 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--cream); }
+.loader-brands i { font-style: normal; color: var(--ember); }
+.loader-count { margin: 0; font: 900 clamp(80px, 18vw, 260px)/.8 var(--display); color: var(--cream); letter-spacing: -.03em; }
+
+/* GSAP owns the hero title once motion is on */
+.motion .hero-title .line > span { animation: none; transform: none; }
+.footer-giant span { display: inline-block; }
+
+/* hero waits for the loader */
+.motion-pending .hero-title .line > span { animation: none; transform: translateY(110%); }
+.motion-pending .hero-tag, .motion-pending .hero-foot, .motion-pending .hero-meta { opacity: 0; }
+
+/* ---------- progress + cursor ---------- */
+.progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 60; background: var(--ember); transform-origin: left; transform: scaleX(0); }
+.cursor { display: none; }
+@media (pointer: fine) {
+  .has-cursor .cursor {
+    display: grid; place-items: center; position: fixed; top: 0; left: 0; z-index: 150; pointer-events: none;
+    width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%;
+    background: var(--cream); mix-blend-mode: difference;
+    transition: width .35s var(--ease), height .35s var(--ease), margin .35s var(--ease), background .35s var(--ease);
+  }
+  .has-cursor .cursor span { font: 800 12px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--bg); opacity: 0; transition: opacity .2s; }
+  .has-cursor .cursor.is-link { width: 56px; height: 56px; margin: -28px 0 0 -28px; }
+  .has-cursor .cursor.is-label { width: 96px; height: 96px; margin: -48px 0 0 -48px; background: var(--ember); mix-blend-mode: normal; }
+  .has-cursor .cursor.is-label span { opacity: 1; }
+}
+
+/* ---------- split headings ---------- */
+.split-w { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .04em; margin-bottom: -.04em; }
+.split-i { display: inline-block; will-change: transform; }
+
+/* ---------- clip reveal ---------- */
+[data-clip] { overflow: hidden; }
+[data-clip] img { will-change: transform; }
+
+/* ---------- hero frame (shrinks on scroll) ---------- */
+.hero-frame { position: absolute; inset: 0; overflow: hidden; will-change: transform, border-radius; }
+.hero-tag { margin-bottom: 28px; }
+
+/* ---------- Make Sense giant scrolling word ---------- */
+.ms-giant {
+  position: absolute; left: 0; right: 0; top: clamp(40px, 6vw, 90px); overflow: hidden; pointer-events: none; z-index: 1;
+  font: 900 clamp(120px, 24vw, 380px)/.8 var(--display); text-transform: uppercase; white-space: nowrap;
+  color: transparent; -webkit-text-stroke: 1px rgba(247, 239, 225, .18);
+}
+.ms-giant span { display: inline-block; will-change: transform; }
+.ms-inner { z-index: 2; }
+.chapter { font-weight: 900; margin-right: 8px; opacity: .7; }
+
+/* ---------- booth clip expand ---------- */
+.booth-clip { position: absolute; inset: 0; overflow: hidden; will-change: clip-path; }
+.booth-clip .booth-img { position: absolute; inset: 0; }
+
+/* ---------- gallery (pinned horizontal on desktop) ---------- */
+.gallery { position: relative; padding: clamp(96px, 12vw, 160px) 0 clamp(64px, 8vw, 120px); }
+.gallery .h-xl { font-size: clamp(44px, 7vw, 112px); }
+.is-pinned-gallery .gallery-pin { height: 100vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.is-pinned-gallery .film { overflow: visible; scroll-snap-type: none; width: max-content; will-change: transform; }
+.is-pinned-gallery .film .f-l { width: min(56vw, 760px); }
+.is-pinned-gallery .film-ctrl { display: none; }
+.is-pinned-gallery .gallery { padding: 0; }
+.is-pinned-gallery .gallery-head { margin-bottom: 40px; }
+
+/* ---------- Connection ---------- */
+.conn { overflow: hidden; background: #0d0710; }
+.conn-media { position: absolute; inset: 0; }
+.conn-media video { width: 100%; height: 100%; object-fit: cover; opacity: .55; }
+.conn-shade { position: absolute; inset: 0; background:
+  linear-gradient(180deg, var(--bg) 0%, rgba(13,7,16,.35) 18%, rgba(13,7,16,.55) 50%, rgba(13,7,16,.92) 78%, var(--bg) 100%),
+  radial-gradient(60% 50% at 70% 30%, rgba(176,107,255,.25), transparent 70%); }
+.conn-inner { position: relative; }
+.tag-violet { background: var(--violet); color: #12081a; }
+.conn-title { font-size: clamp(76px, 15.5vw, 250px); line-height: .82; }
+.conn-title .dot { color: var(--violet); }
+.conn-body { margin-top: clamp(48px, 7vw, 100px); align-items: end; }
+.facts-violet { margin: 0; }
+.facts-violet div { background: rgba(18, 8, 26, .7); }
+.facts-violet dd { color: var(--violet-2); }
+.conn-grid {
+  display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: clamp(70px, 8vw, 120px); gap: 12px;
+  margin-top: clamp(56px, 8vw, 120px);
+}
+.conn-grid figure { margin: 0; border-radius: 6px; position: relative; }
+.conn-grid img { width: 100%; height: 115%; object-fit: cover; position: absolute; top: -7.5%; left: 0; }
+.cg-a { grid-column: 1 / 8; grid-row: 1 / 5; }
+.cg-b { grid-column: 8 / 13; grid-row: 1 / 4; }
+.cg-c { grid-column: 8 / 13; grid-row: 4 / 7; }
+.cg-d { grid-column: 2 / 8; grid-row: 5 / 7; }
+
+/* ---------- Euforia ---------- */
+.euforia { position: relative; padding: clamp(80px, 11vw, 160px) 0; border-block: 1px solid var(--line); background:
+  radial-gradient(80% 120% at 100% 0%, rgba(255,179,107,.10), transparent 60%), var(--bg); }
+.euforia-inner { display: grid; grid-template-columns: auto 1fr; gap: 0 clamp(24px, 5vw, 80px); align-items: end; }
+.euforia-inner .tag { grid-column: 1 / -1; justify-self: start; }
+.euforia-title { font-size: clamp(64px, 11vw, 170px); line-height: .85; }
+.euforia-title .dot { color: var(--ember-2); }
+.euforia .big { max-width: 34ch; margin: 0 0 .4em; }
+
+/* ---------- record intro ---------- */
+.record-intro { padding-top: clamp(0px, 3vw, 48px); }
+
+/* ---------- artist wall light-up ---------- */
+.motion .artist-wall li { transition: color .5s var(--ease), -webkit-text-stroke-color .5s var(--ease); }
+.motion .artist-wall li.lit { color: var(--cream); -webkit-text-stroke-color: transparent; }
+
+/* ---------- footer giant ---------- */
+.footer { overflow: hidden; }
+.footer-giant { font: 900 clamp(56px, 15vw, 280px)/.78 var(--display); text-transform: uppercase; white-space: nowrap; text-align: center;
+  color: transparent; -webkit-text-stroke: 1px rgba(247,239,225,.16); padding: 24px 0 40px; letter-spacing: -.02em; }
+
+/* ---------- reels hover ---------- */
+.reel { transition: transform .5s var(--ease), border-color .5s var(--ease); }
+@media (pointer: fine) { .reel:hover { transform: translateY(-6px); border-color: var(--ember); } }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1000px) {
+  .euforia-inner { grid-template-columns: 1fr; }
+  .conn-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
+  .conn-grid figure { aspect-ratio: 4 / 3; }
+  .cg-a { grid-column: 1 / -1; grid-row: auto; aspect-ratio: 16 / 10; }
+  .cg-b, .cg-c, .cg-d { grid-column: auto; grid-row: auto; }
+  .cg-d { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
+}
+@media (max-width: 640px) {
+  .loader-count { font-size: 34vw; }
+  .loader-inner { flex-direction: column; align-items: flex-start; }
+  .ms-giant { top: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loader, .cursor, .progress { display: none !important; }
+}

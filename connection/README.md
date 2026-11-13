@@ -1,4 +1,4 @@
-# Connection / Make Sense / Euforia: booking landing page
+# Make Sense / Connection / Euforia: booking landing page
 
 A static page for international artist PR and booking. There is no build step. It is served by Vercel from this folder.
 
@@ -12,3 +12,9 @@ New Project → import `amitbeneli/KO` → **Root Directory: `connection`** → 
 This folder is not included in the GitHub Pages deploy of the K.O site.
 
 Run locally: `python3 -m http.server --directory connection`
+
+## Motion
+- `motion.js` + `motion.css`: intro, smooth scroll (Lenis), scroll animations (GSAP ScrollTrigger), custom cursor.
+- Libraries are hosted in `vendor/` (GSAP 3.12.5, Lenis 1.1.13), so nothing loads from an outside CDN.
+- With reduced motion turned on, or if the scripts fail to load, the page shows as a normal static page.
+- Headings with `data-split` animate word by word. Figures with `data-clip` open on scroll. Images with `data-parallax="N"` drift by N%.
