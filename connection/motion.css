@@ -291,3 +291,14 @@ p { color: rgba(247, 239, 225, .66); }
   .hero-tag { margin-bottom: 18px; }
   .hero-title { margin-bottom: 28px; }
 }
+
+/* phones: booth view centred, text on the darker lower third, no dead band after */
+@media (max-width: 640px) {
+  .booth { min-height: 82svh; align-items: flex-end; }
+  .booth-img { object-position: 50% 35%; }
+  .booth-shade { background: linear-gradient(180deg, var(--bg) 0%, rgba(11,9,7,0) 18%, rgba(11,9,7,0) 40%, rgba(11,9,7,.9) 78%, var(--bg) 100%); }
+  .booth-inner { text-align: center; padding-bottom: 28px; }
+  .booth-inner .tag { display: block; }
+  .booth-inner .big { margin-left: auto; margin-right: auto; max-width: 30ch; }
+  .gallery { padding-top: 40px; }
+}
