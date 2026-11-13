@@ -2,7 +2,7 @@
    CONTENT — edit here
    ============================================================ */
 const CONFIG = {
-  // TODO: real booking address. The form opens the visitor's mail app addressed to this.
+  // Booking address. The form opens the visitor's mail app addressed to this.
   bookingEmail: "K.O@sako-mgmt.com",
   // Instagram profile links (an empty one is hidden on the page)
   instagram: {
