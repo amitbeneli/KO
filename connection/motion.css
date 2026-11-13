@@ -213,3 +213,8 @@ p { color: rgba(247, 239, 225, .66); }
   .nav .brandline { font-size: 10px; letter-spacing: .06em; gap: 5px; flex-wrap: nowrap; white-space: nowrap; }
   .euforia-title { font-size: clamp(48px, 15vw, 170px); }
 }
+
+.euforia-facts { grid-column: 1 / -1; display: flex; gap: clamp(28px, 5vw, 72px); margin: clamp(28px, 3vw, 44px) 0 0; padding-top: 24px; border-top: 1px solid var(--line); }
+.euforia-facts dt { font: 600 11px/1 var(--display); letter-spacing: .22em; text-transform: uppercase; color: var(--cream-dim); margin-bottom: 10px; }
+.euforia-facts dd { margin: 0; font: 700 clamp(26px, 2.6vw, 38px)/1 var(--display); text-transform: uppercase; color: var(--ember-2); }
+@media (max-width: 1000px) { .euforia .big { margin-top: 14px; } }
