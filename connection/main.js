@@ -4,10 +4,10 @@
 const CONFIG = {
   // TODO: real booking address. The form opens the visitor's mail app addressed to this.
   bookingEmail: "K.O@sako-mgmt.com",
-  // TODO: real Instagram profile links
+  // Instagram profile links (an empty one is hidden on the page)
   instagram: {
-    connection: "",
-    makesense: "",
+    connection: "https://www.instagram.com/connection__community/",
+    makesense: "https://www.instagram.com/wearemakesense/",
     euforia: "",
   },
 };
