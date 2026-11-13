@@ -303,3 +303,9 @@ p { color: rgba(247, 239, 225, .66); }
   .nav .brandline { font-size: 11px; }
   .contact .h-xxl { margin-bottom: 18px; }
 }
+
+/* Make Sense wordmark (nav + footer) */
+.wordmark { display: inline-block; gap: 0; font: 800 17px/1 var(--display); letter-spacing: .02em; text-transform: uppercase; color: var(--cream); text-decoration: none; }
+.wordmark .dot { color: var(--accent); }
+.footer .wordmark { font-size: 16px; }
+@media (max-width: 640px) { .nav .wordmark { font-size: 16px; } }
