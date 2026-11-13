@@ -192,7 +192,7 @@ p { color: var(--cream-dim); margin: 0 0 1.1em; }
 /* make sense */
 .ms { overflow: hidden; padding-top: clamp(120px, 16vw, 240px); }
 .ms-media { position: absolute; inset: 0; }
-.ms-media img { width: 100%; height: 100%; object-fit: cover; filter: saturate(1.15); }
+.ms-media img, .ms-media video { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(1.15); }
 .ms-shade { position: absolute; inset: 0; background: linear-gradient(180deg, var(--bg) 0%, rgba(11,9,7,.35) 25%, rgba(11,9,7,.55) 55%, var(--bg) 92%); }
 .ms-inner { position: relative; }
 .ms-title { font-size: clamp(88px, 21vw, 340px); line-height: .82; display: flex; flex-direction: column; }

@@ -108,6 +108,56 @@
   gsap.fromTo("#msGiant", { xPercent: 0 }, { xPercent: -45, ease: "none",
     scrollTrigger: { trigger: "#makesense", start: "top bottom", end: "bottom top", scrub: true } });
 
+  /* ---------- Make Sense: background clip follows the scroll, golden hour to night ---------- */
+  const msv = $("#msVideo");
+  if (msv) {
+    const phone = matchMedia("(max-width: 640px)").matches;
+    // night is reached as the section's lower edge arrives, while the stage is still on screen
+    const span = ScrollTrigger.create({ trigger: "#makesense", start: "top 85%", end: "bottom bottom" });
+    let ready = false, primed = false, priming = false, eased = 0, shown = -1;
+    const isReady = () => { ready = msv.readyState >= 1 && isFinite(msv.duration) && msv.duration > 0; };
+    // iOS Safari only seeks once the element has started playing at least once:
+    // play and pause straight away, on load and again on the first touch if that was refused
+    const unlockEvents = ["pointerdown", "touchstart", "keydown"];
+    const prime = () => {
+      if (primed || priming || !msv.src) return;
+      priming = true;
+      const done = (ok) => {
+        priming = false; primed = ok; msv.pause(); shown = -1;
+        if (ok) unlockEvents.forEach((ev) => removeEventListener(ev, prime));
+      };
+      try {
+        const p = msv.play();
+        if (p && p.then) p.then(() => done(true), () => done(false)); else done(true);
+      } catch (e) { done(false); }
+    };
+    const load = () => {
+      if (msv.src) return;
+      msv.preload = "auto";
+      msv.addEventListener("loadedmetadata", () => { isReady(); prime(); });
+      msv.addEventListener("loadeddata", isReady);
+      msv.addEventListener("error", () => { ready = false; }); // poster stays up
+      msv.src = phone ? msv.dataset.mobile : msv.dataset.desktop;
+      msv.load();
+    };
+    // start fetching about a screen before the section arrives
+    ScrollTrigger.create({ trigger: "#makesense", start: "top bottom+=100%", end: "bottom top-=100%", once: true, onEnter: load, onEnterBack: load });
+    unlockEvents.forEach((ev) => addEventListener(ev, prime, { passive: true }));
+
+    gsap.ticker.add(() => {
+      if (!ready || priming) return;
+      const target = span.progress;
+      if (eased === target && shown >= 0) return;
+      eased += (target - eased) * 0.2;
+      if (Math.abs(target - eased) < 0.0005) eased = target;
+      const t = Math.min(msv.duration - 0.04, Math.max(0, eased * msv.duration));
+      if (Math.abs(t - shown) < 0.02 || msv.seeking) return; // half a frame at 25fps; let a pending seek land
+      if (!msv.paused) msv.pause();
+      msv.currentTime = t;
+      shown = t;
+    });
+  }
+
   /* ---------- parallax images ---------- */
   $$("[data-parallax]").forEach((img) => {
     const amt = +img.dataset.parallax;

@@ -54,6 +54,10 @@ if (heroVideo && !window.matchMedia("(prefers-reduced-motion: reduce)").matches)
   heroVideo.poster = "media/hero-mobile-poster.jpg";
 }
 
+// Make Sense background: vertical frame on phones (the clip itself is attached by motion.js)
+const msVideo = $("#msVideo");
+if (msVideo && window.matchMedia("(max-width: 640px)").matches) msVideo.poster = msVideo.dataset.mobilePoster;
+
 // lists
 $("#msLineup").innerHTML = MAKE_SENSE_LINEUP.map((a) => `<li>${esc(a)}</li>`).join("");
 $("#artistWall").innerHTML = ARTISTS.map((a) => `<li>${esc(a)}</li>`).join("");
