@@ -286,7 +286,8 @@ p { color: var(--cream-dim); margin: 0 0 1.1em; }
 
 /* artist portraits */
 .portraits { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: clamp(40px, 5vw, 64px); }
-.portraits img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 6px; filter: grayscale(1) contrast(1.1); transition: filter .6s var(--ease); }
+.portraits { align-items: start; }
+.portraits img { width: 100%; height: auto; aspect-ratio: 3 / 4; align-self: start; object-fit: cover; object-position: 50% 25%; border-radius: 6px; filter: grayscale(1) contrast(1.1); transition: filter .6s var(--ease); }
 .portraits img:hover { filter: none; }
 
 /* ---------- reveal ---------- */
