@@ -1,0 +1,81 @@
+/* ============================================================
+   Signature moments (see wow.js)
+   ============================================================ */
+
+/* 1. colour wash between worlds */
+.wipe {
+  position: fixed; left: 0; right: 0; top: 0; height: 100vh; z-index: 42; pointer-events: none; visibility: hidden;
+  background: linear-gradient(180deg, rgba(var(--wipe), 0) 0%, rgba(var(--wipe), .28) 42%, rgba(var(--wipe), .42) 50%, rgba(var(--wipe), .28) 58%, rgba(var(--wipe), 0) 100%);
+  mix-blend-mode: screen;
+}
+.wipe.on { visibility: visible; }
+
+/* 2. live lineup */
+.has-media { cursor: pointer; position: relative; }
+.has-media::before {
+  content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  margin-right: 8px; vertical-align: .32em; box-shadow: 0 0 0 0 var(--accent); animation: livePulse 2.4s ease-out infinite;
+}
+@keyframes livePulse { 0% { box-shadow: 0 0 0 0 rgba(255,106,43,.55); } 70%, 100% { box-shadow: 0 0 0 8px rgba(255,106,43,0); } }
+.has-media:hover, .has-media:focus-visible { color: var(--accent) !important; outline: none; }
+.peek {
+  position: fixed; left: 0; top: 0; z-index: 70; width: 200px; aspect-ratio: 9 / 16; border-radius: 12px; overflow: hidden;
+  background: #111; pointer-events: none; opacity: 0; scale: .85;
+  box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(247,239,225,.12);
+  transition: opacity .35s var(--ease), scale .45s var(--ease);
+}
+.peek.on { opacity: 1; scale: 1; }
+.peek video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.peek span {
+  position: absolute; left: 12px; right: 12px; bottom: 12px; font: 800 15px/1.1 var(--display); text-transform: uppercase; color: var(--cream);
+  text-shadow: 0 2px 12px rgba(0,0,0,.7);
+}
+.peek.docked { left: 50%; top: auto; bottom: 88px; transform: translateX(-50%) !important; width: 150px; }
+
+/* 3. soundtrack toggle */
+.sound {
+  position: fixed; right: max(16px, var(--gutter)); bottom: calc(18px + env(safe-area-inset-bottom)); z-index: 60;
+  display: inline-flex; align-items: center; gap: 10px; padding: 11px 16px 11px 14px; border-radius: 999px; cursor: pointer;
+  background: rgba(11,9,7,.62); color: var(--cream); border: 1px solid var(--line);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  font: 700 11px/1 var(--display); letter-spacing: .2em; text-transform: uppercase;
+  transition: border-color .3s var(--ease), background .3s var(--ease);
+}
+.sound:hover { border-color: var(--accent); }
+.sound i { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+.sound b { display: block; width: 2px; height: 3px; background: var(--accent); border-radius: 1px; transition: height .3s; }
+.sound.on b { animation: eq 0.9s ease-in-out infinite alternate; }
+.sound.on b:nth-child(2) { animation-delay: -.3s; } .sound.on b:nth-child(3) { animation-delay: -.6s; } .sound.on b:nth-child(4) { animation-delay: -.15s; }
+@keyframes eq { from { height: 3px; } to { height: 12px; } }
+
+/* 4. booking pass */
+.pass {
+  position: relative; padding: clamp(24px, 3vw, 36px); border-radius: 14px; color: #0b0907;
+  background: linear-gradient(135deg, #f7efe1 0%, #f3e3c8 60%, #ffcfa8 100%);
+  box-shadow: 0 40px 100px rgba(0,0,0,.5);
+}
+.pass-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font: 700 11px/1 var(--display); letter-spacing: .2em; text-transform: uppercase; }
+.pass .wordmark { color: #0b0907; font-size: 18px; }
+.pass-name { margin: 34px 0 26px; font: 900 clamp(34px, 4vw, 54px)/.95 var(--display); text-transform: uppercase; color: #0b0907; word-break: break-word; }
+.pass-grid { display: grid; grid-template-columns: 1fr 1.4fr .8fr; gap: 14px; font: 700 15px/1.2 var(--display); text-transform: uppercase; }
+.pass-grid small { display: block; font: 600 10px/1 var(--display); letter-spacing: .22em; opacity: .6; margin-bottom: 8px; }
+.pass-grid em { font-style: normal; text-transform: none; word-break: break-all; }
+.pass-cut { margin: 26px -36px 18px; border-top: 2px dashed rgba(11,9,7,.35); position: relative; }
+.pass-cut::before, .pass-cut::after { content: ""; position: absolute; top: -13px; width: 24px; height: 24px; border-radius: 50%; background: var(--bg); }
+.pass-cut::before { left: -12px; } .pass-cut::after { right: -12px; }
+.pass-foot { margin: 0; font-size: 13px; color: rgba(11,9,7,.7); }
+@media (max-width: 640px) { .pass-grid { grid-template-columns: 1fr 1fr; } .pass-cut { margin-left: -24px; margin-right: -24px; } }
+
+/* booking heading caret */
+.caret { display: inline-block; width: .08em; height: .78em; margin-left: .06em; background: var(--accent); vertical-align: baseline; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .wipe, .caret { display: none !important; }
+  .has-media::before { animation: none; }
+}
+@media (max-width: 640px) {
+  .sound { padding: 12px; gap: 0; }
+  .sound span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .sound i { height: 14px; }
+}

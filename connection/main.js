@@ -147,8 +147,9 @@ form.addEventListener("submit", (ev) => {
     "",
     d.message,
   ].join("\n");
-  window.location.href = `mailto:${CONFIG.bookingEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  note.textContent = "Opening your email app…";
+  const mail = `mailto:${CONFIG.bookingEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  if (window.showPass) { window.showPass(d); setTimeout(() => { window.location.href = mail; }, 1400); }
+  else { window.location.href = mail; note.textContent = "Opening your email app…"; }
 });
 
 // moments: vertical clips. Muted autoplay while on screen; tap toggles sound (one at a time).
