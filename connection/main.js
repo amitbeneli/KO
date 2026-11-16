@@ -12,10 +12,10 @@ const CONFIG = {
   },
 };
 
-// Make Sense 2026 lineup, headliner first
+// Make Sense 2026 lineup, as played
 const MAKE_SENSE_LINEUP = [
-  "Adam Ten", "Yamagucci", "Darco", "Broken Hill", "K.O", "Mishell",
-  "Itayga", "Dor Danino", "Bonafique", "Jenia Tarsol", "Out Of Orbit",
+  "Adam Ten", "Darco B2B Yamagucci", "Bonafique B2B Jenia Tarsol", "K.O B2B Broken Hill",
+  "Dor Danino B2B Itayga", "Mishell", "Out Of Orbit",
 ];
 
 // Everyone who has played Connection / Make Sense / Euforia
@@ -25,12 +25,6 @@ const ARTISTS = [
   "Broken Hill", "Assaf Michael", "Out Of Orbit", "Rising Dust", "K.O", "Mishell",
   "Freedom Fighters", "Itayga", "Astral Projection", "Dor Danino", "Bonafique",
   "Birkman", "Chemo", "Dodi", "Passis", "Stern", "Itamar", "Reef Kopel",
-];
-
-// Connection 2 Years Celebration lineup (A-Z, as on the poster)
-const CONNECTION_LINEUP = [
-  "Club De Combat", "Darco", "Omer Keinan (Live)", "Rising Dust (Day set)",
-  "Assaf Michael b2b Chemo", "Birkman", "Dodi", "Itamar b2b Reef Kopel", "Passis", "Stern",
 ];
 
 // Vertical clips in the Moments section (files in media/reels/)
@@ -74,7 +68,6 @@ if (cvid && window.matchMedia("(max-width: 640px)").matches) { cvid.dataset.src 
 
 // lists
 $("#msLineup").innerHTML = MAKE_SENSE_LINEUP.map((a) => `<li>${esc(a)}</li>`).join("");
-const cl = $("#connLineup"); if (cl) cl.innerHTML = CONNECTION_LINEUP.map((a) => `<li>${esc(a)}</li>`).join("");
 $("#artistWall").innerHTML = ARTISTS.map((a) => `<li>${esc(a)}</li>`).join("");
 
 // marquee: two identical halves so the -50% loop is seamless

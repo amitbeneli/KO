@@ -79,3 +79,26 @@
   .sound span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .sound i { height: 14px; }
 }
+
+/* hero window: three productions */
+.motion .hero-window span.w-cn { font-size: clamp(64px, 16.5vw, 270px); }
+.motion .hero-window span.w-eu { font-size: clamp(90px, 23vw, 380px); }
+@media (max-width: 640px) {
+  .motion .hero-window span.w-cn { font-size: 16.5vw; }
+  .motion .hero-window span.w-eu { font-size: 23vw; }
+}
+
+/* agenda */
+.agenda { padding: clamp(72px, 9vw, 130px) 0; border-bottom: 1px solid var(--line); }
+.agenda-statement {
+  margin: 0; max-width: 18ch; color: var(--cream);
+  font: 800 clamp(38px, 5.6vw, 92px)/.98 var(--display); text-transform: uppercase; letter-spacing: -.01em;
+}
+.agenda-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(20px, 3vw, 44px); margin-top: clamp(40px, 5vw, 72px); padding-top: 28px; border-top: 1px solid var(--line); }
+.agenda-grid h3 { margin: 0 0 12px; font: 700 13px/1 var(--display); letter-spacing: .24em; text-transform: uppercase; color: var(--accent); }
+.agenda-grid p { margin: 0; font-size: 15px; line-height: 1.6; }
+@media (max-width: 1000px) { .agenda-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .agenda-grid { grid-template-columns: 1fr; gap: 22px; } .agenda-statement { font-size: 11vw; } }
+
+/* footer giant: three names on one line */
+.footer-giant { font-size: clamp(36px, 7.4vw, 140px) !important; white-space: nowrap; }

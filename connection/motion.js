@@ -80,7 +80,20 @@
     .fromTo("#heroWindow span", { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.6, ease: "expo.out" }, 0.25)
     .fromTo("#heroEnter", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 1, ease: "expo.out" }, 0.9);
 
-  gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "+=110%", pin: true, scrub: 0.8, anticipatePin: 1 } })
+  // the window cycles through the three productions until the visitor starts scrolling
+  const winSpan = $("#heroWindow span");
+  const prodNames = [["w-ms", "Make<br>Sense"], ["w-cn", "Connection"], ["w-eu", "Euforia"]];
+  let ni = 0;
+  const cycle = setInterval(() => {
+    if (scrollY > 8) { clearInterval(cycle); return; }
+    gsap.to(winSpan, { opacity: 0, scale: 0.94, duration: 0.35, ease: "power2.in", onComplete: () => {
+      ni = (ni + 1) % prodNames.length; winSpan.className = prodNames[ni][0]; winSpan.innerHTML = prodNames[ni][1];
+      gsap.to(winSpan, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" });
+    } });
+  }, 2300);
+
+  gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "+=110%", pin: true, scrub: 0.8, anticipatePin: 1,
+      onUpdate: (s) => { if (s.progress > 0.01) clearInterval(cycle); } } })
     .to("#heroEnter", { opacity: 0, duration: 0.1 }, 0)
     .to("#heroWindow span", { scale: 9, ease: "power2.in", duration: 0.6 }, 0)
     .to("#heroWindow", { opacity: 0, ease: "power1.in", duration: 0.25 }, 0.35)
@@ -102,6 +115,14 @@
       boost *= 0.92;
     });
     ScrollTrigger.create({ onUpdate: (s) => { dir = s.direction === 1 ? -1 : 1; boost = Math.min(Math.abs(s.getVelocity()) / 220, 14); } });
+  }
+
+  /* ---------- agenda: the statement lights up word by word as you read ---------- */
+  const st = $("#agendaStatement");
+  if (st) {
+    st.innerHTML = st.textContent.split(/(\s+)/).map((w) => (/^\s+$/.test(w) ? w : `<span class="aw">${w}</span>`)).join("");
+    gsap.fromTo($$(".aw", st), { opacity: 0.16 }, { opacity: 1, ease: "none", stagger: 0.1,
+      scrollTrigger: { trigger: st, start: "top 82%", end: "bottom 45%", scrub: true } });
   }
 
   /* ---------- Make Sense: giant outline word slides across ---------- */
@@ -220,7 +241,7 @@
   [
     ["#connection", "top 70%", "top 20%", palette.ember, palette.violet],
     ["#euforia", "top 70%", "top 30%", palette.violet, palette.gold],
-    ["#moments", "top 65%", "top 15%", palette.gold, palette.ember],
+    ["#artists", "top 65%", "top 15%", palette.gold, palette.ember],
   ].forEach(([trigger, start, end, from, to]) => {
     if (!$(trigger)) return;
     gsap.fromTo(root, { ...from }, { ...to, ease: "none", immediateRender: false,
