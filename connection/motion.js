@@ -67,18 +67,27 @@
     });
   });
 
-  /* ---------- intro: a short curtain lifts onto the hero ---------- */
+  /* ---------- intro: the festival plays through the letters of MAKE SENSE ----------
+     A black layer with white type sits over the hero video with multiply blending,
+     so the video only shows inside the letters. Scrolling (pinned) grows the letters
+     until the video fills the screen, then the hero copy rises in. */
+  gsap.set(["#heroInner .hero-tag", "#heroInner .hero-foot"], { opacity: 0, y: 30 });
+  gsap.set(".hero-title .line > span", { y: 0, yPercent: 110 });
+  gsap.set(".hero-shade", { opacity: 0 });
   gsap.timeline()
     .to(".loader-panel", { yPercent: -100, duration: 0.75, ease: "expo.inOut", delay: 0.1 })
     .add(() => { done(); $("#loader").style.display = "none"; })
-    .fromTo("#heroFrame", { scale: 1.12 }, { scale: 1, duration: 1.6, ease: "expo.out" }, 0.2)
-    .fromTo(".hero-title .line > span", { y: 0, yPercent: 110 }, { y: 0, yPercent: 0, duration: 1.2, ease: "expo.out", stagger: 0.09 }, 0.35)
-    .fromTo([".hero-tag", ".hero-foot"], { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "expo.out", stagger: 0.08 }, 0.7);
+    .fromTo("#heroWindow span", { scale: 0.86, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.6, ease: "expo.out" }, 0.25)
+    .fromTo("#heroEnter", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 1, ease: "expo.out" }, 0.9);
 
-  /* ---------- hero: frame shrinks into a card, text drifts up ---------- */
-  gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } })
-    .to("#heroFrame", { scale: 0.88, borderRadius: 24, ease: "none" }, 0)
-    .to("#heroInner", { yPercent: -18, opacity: 0.2, ease: "none" }, 0);
+  gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "+=110%", pin: true, scrub: 0.8, anticipatePin: 1 } })
+    .to("#heroEnter", { opacity: 0, duration: 0.1 }, 0)
+    .to("#heroWindow span", { scale: 9, ease: "power2.in", duration: 0.6 }, 0)
+    .to("#heroWindow", { opacity: 0, ease: "power1.in", duration: 0.25 }, 0.35)
+    .to(".hero-shade", { opacity: 1, duration: 0.3 }, 0.45)
+    .to(".hero-title .line > span", { yPercent: 0, ease: "expo.out", stagger: 0.05, duration: 0.3 }, 0.55)
+    .to(["#heroInner .hero-tag", "#heroInner .hero-foot"], { opacity: 1, y: 0, ease: "expo.out", stagger: 0.05, duration: 0.3 }, 0.62)
+    .to({}, { duration: 0.15 });
 
   /* ---------- marquee reacts to scroll speed and direction ---------- */
   const track = $("#marquee");

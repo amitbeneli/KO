@@ -331,3 +331,28 @@ p { color: rgba(247, 239, 225, .66); }
   .cm-col:last-child { display: none; }
   .cm-mid { margin-top: 36px; }
 }
+
+/* ============================================================
+   Hero entrance: the video plays through the letters
+   ============================================================ */
+.hero-window, .hero-enter { display: none; }
+.motion .hero-window {
+  display: flex; align-items: center; justify-content: center; position: absolute; inset: 0; z-index: 3;
+  background: #000; mix-blend-mode: multiply; pointer-events: none; overflow: hidden;
+}
+.motion .hero-window span {
+  display: block; color: #fff; text-align: center; text-transform: uppercase; white-space: nowrap;
+  font: 900 clamp(120px, 27vw, 430px)/.8 var(--display); letter-spacing: -.02em;
+  transform-origin: 50% 50%; will-change: transform;
+}
+.motion .hero-enter {
+  display: block; position: absolute; left: 0; right: 0; bottom: 34px; z-index: 4; margin: 0; text-align: center;
+  font: 600 11px/1 var(--display); letter-spacing: .32em; text-transform: uppercase; color: var(--cream-dim);
+}
+.motion .hero-enter::after { content: ""; display: block; width: 1px; height: 28px; margin: 14px auto 0; background: var(--accent); animation: enterCue 1.8s ease-in-out infinite; transform-origin: top; }
+@keyframes enterCue { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); } 100% { transform: scaleY(0); transform-origin: bottom; } }
+.motion .hero { min-height: 100svh; }
+@media (max-width: 640px) {
+  .motion .hero-window span { font-size: 34vw; line-height: .82; }
+  .motion .hero { min-height: 100svh; }
+}
