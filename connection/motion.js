@@ -181,6 +181,13 @@
       scrollTrigger: { trigger: "#gallery", start: "top top", end: () => "+=" + dist(), scrub: true } }));
   }
 
+  /* ---------- Connection mosaic: columns drift at different speeds ---------- */
+  if (desktop) $$(".cm-col").forEach((col) => {
+    const sp = +col.dataset.speed || 0;
+    gsap.fromTo(col, { yPercent: -sp / 2 }, { yPercent: sp / 2, ease: "none",
+      scrollTrigger: { trigger: ".cmosaic", start: "top bottom", end: "bottom top", scrub: true } });
+  });
+
   /* ---------- Connection: background loop plays only on screen ---------- */
   const cv = $("#connVideo");
   if (cv) ScrollTrigger.create({ trigger: "#connection", start: "top bottom", end: "bottom top",
@@ -189,13 +196,13 @@
     } });
 
   /* ---------- ambient colour: the room's light shifts per brand ----------
-     Ember through Make Sense, violet through Connection, gold through
+     Ember through Make Sense, mint through Connection, gold through
      Euforia, then back to the ember house style. Each change is scrubbed
      across a section boundary so there is never a hard switch. Created
      after the gallery pin so the positions include its spacing. */
   const palette = {
     ember:  { "--accent": "#ff6a2b", "--accent-2": "#ffb36b", "--glow": "rgba(255, 106, 43, .07)",  "--bg": "#0b0907" },
-    violet: { "--accent": "#b06bff", "--accent-2": "#e2c6ff", "--glow": "rgba(150, 90, 255, .085)", "--bg": "#0d0710" },
+    violet: { "--accent": "#5fd8b8", "--accent-2": "#c3f2e3", "--glow": "rgba(95, 216, 184, .08)", "--bg": "#06100d" },
     gold:   { "--accent": "#e9b45c", "--accent-2": "#f6d49a", "--glow": "rgba(233, 180, 92, .075)", "--bg": "#0d0a06" },
   };
   const ambient = document.createElement("div");
